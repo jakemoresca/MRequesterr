@@ -1,4 +1,6 @@
-namespace MRequesterr.Data
+using MRequesterr.Models;
+
+namespace MRequesterr.Services
 {
     public class WeatherForecastService
     {

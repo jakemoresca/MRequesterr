@@ -1,4 +1,4 @@
-namespace MRequesterr.Data
+namespace MRequesterr.Models
 {
     public class WeatherForecast
     {

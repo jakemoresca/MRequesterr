@@ -1,0 +1,80 @@
+﻿@page "/settings/series"
+
+<div class="vw-100">
+    <nav class="navbar bg-light ml-n1">
+        <div class="container-fluid justify-content-start">
+            <div class="col-md-9">
+                <button type="button" class="btn btn-outline-primary" (click)="saveSettings()">Save</button>
+                <button type="button" class="btn btn-outline-primary" (click)="testSettings()">Test Settings</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <h2>Series Settings</h2>
+
+            @if (saveSuccess == true)
+            {
+                <div class="alert alert-success d-flex align-items-center" role="alert">
+                    <i class="bi bi-check2"></i>
+                    <div>
+                        Settings was saved succesfully
+                    </div>
+                </div>
+            }
+
+            @if (testSuccess.HasValue && testSuccess.Value == false)
+            {
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <i class="bi bi-exclamation-diamond-fill"></i>
+                    <div>
+                        Cannot connect to Sonarr using the settings provided
+                    </div>
+                </div>
+            }
+            else if (testSuccess.HasValue && testSuccess.Value == true)
+            {
+                <div class="alert alert-success d-flex align-items-center" role="alert">
+                    <i class="bi bi-check2"></i>
+                    <div>
+                        Connection to Sonarr has been established
+                    </div>
+                </div>
+            }
+
+            <hr>
+
+            <h5>Sonarr Integration</h5>
+
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="baseUrl" [(ngModel)]="settings.movieSettings.baseUrl">
+                <label for="baseUrl">Base Url</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="apiKey" [(ngModel)]="settings.movieSettings.apiKey">
+                <label for="apiKey">Api Key</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="host" [(ngModel)]="settings.movieSettings.host">
+                <label for="host">Host</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="number" class="form-control" id="port" min="1" maxlength="5" [(ngModel)]="settings.movieSettings.port">
+                <label for="port">Port</label>
+            </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" value="" id="useSsl" [(ngModel)]="settings.movieSettings.useSsl">
+                <label class="form-check-label" for="useSsl">
+                    Use SSL
+                </label>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool? testSuccess;
+    private bool saveSuccess;
+}
