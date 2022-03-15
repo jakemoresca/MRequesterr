@@ -5,10 +5,11 @@
 <PageTitle>MRequesterr</PageTitle>
 
 <NavMenu />
-<div class="container-fluid">
+<div class="container-fluid" style="display: flex">
+    <Sidebar />   
     <main>
-        <Sidebar />        
-
-        @Body
+        <div class="vw-100">
+            @Body
+        </div>
     </main>
 </div>

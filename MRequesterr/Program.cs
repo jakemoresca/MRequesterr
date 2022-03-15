@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MRequesterr.Models;
 using MRequesterr.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 var mvcBuilder = builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddScoped<ISettingsService, SettingsService>();
+builder.Services.AddScoped<IRadarrService, RadarrService>();
+builder.Services.AddScoped<ISonarrService, SonarrService>();
+
+builder.Configuration.AddJsonFile("integrationSettings.json", optional: true, reloadOnChange: true)
+    .AddJsonFile($"appsettings.json", true, true);
+
+builder.Services.Configure<IntegrationOptions>(
+    builder.Configuration.GetSection(IntegrationOptions.IntegrationOptionsKey));
+
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

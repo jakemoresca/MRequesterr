@@ -1,6 +1,7 @@
 body {
     min-height: 100vh;
     min-height: -webkit-fill-available;
+    overflow: hidden;
 }
 
 html {
@@ -10,11 +11,14 @@ html {
 main {
     display: flex;
     flex-wrap: nowrap;
-    height: 100vh;
-    height: -webkit-fill-available;
+    /*height: 100vh;
+    height: -webkit-fill-available;*/
     max-height: 100vh;
-    overflow-x: auto;
-    overflow-y: hidden;
+    /*overflow-x: auto;
+    overflow-y: hidden;*/
+    width: calc(100% - 280px);
+    overflow: auto;
+    height: calc(100vh - 80px);
 }
 
 .b-example-divider {

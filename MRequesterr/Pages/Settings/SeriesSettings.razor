@@ -1,80 +1,100 @@
 ﻿@page "/settings/series"
+@using MRequesterr.Models
+@using MRequesterr.Services
 
-<div class="vw-100">
-    <nav class="navbar bg-light ml-n1">
-        <div class="container-fluid justify-content-start">
-            <div class="col-md-9">
-                <button type="button" class="btn btn-outline-primary" (click)="saveSettings()">Save</button>
-                <button type="button" class="btn btn-outline-primary" (click)="testSettings()">Test Settings</button>
-            </div>
+@inject ISettingsService _settingsService
+@inject ISonarrService _sonarrService
+
+<nav class="navbar bg-light ml-n1">
+    <div class="container-fluid justify-content-start">
+        <div class="col-md-9">
+            <button type="button" class="btn btn-outline-primary" @onclick="SaveSettings">Save</button>
+            <button type="button" class="btn btn-outline-primary" @onclick="TestSettings">Test Settings</button>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <div class="album py-5 bg-light">
-        <div class="container">
-            <h2>Series Settings</h2>
+<div class="album py-5 bg-light">
+    <div class="container">
+        <h2>Series Settings</h2>
 
-            @if (saveSuccess == true)
-            {
-                <div class="alert alert-success d-flex align-items-center" role="alert">
-                    <i class="bi bi-check2"></i>
-                    <div>
-                        Settings was saved succesfully
-                    </div>
+        @if (saveSuccess == true)
+        {
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                <i class="bi bi-check2"></i>
+                <div>
+                    Settings was saved succesfully
                 </div>
-            }
+            </div>
+        }
 
-            @if (testSuccess.HasValue && testSuccess.Value == false)
-            {
-                <div class="alert alert-danger d-flex align-items-center" role="alert">
-                    <i class="bi bi-exclamation-diamond-fill"></i>
-                    <div>
-                        Cannot connect to Sonarr using the settings provided
-                    </div>
+        @if (testSuccess.HasValue && testSuccess.Value == false)
+        {
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <i class="bi bi-exclamation-diamond-fill"></i>
+                <div>
+                    Cannot connect to Radarr using the settings provided
                 </div>
-            }
-            else if (testSuccess.HasValue && testSuccess.Value == true)
-            {
-                <div class="alert alert-success d-flex align-items-center" role="alert">
-                    <i class="bi bi-check2"></i>
-                    <div>
-                        Connection to Sonarr has been established
-                    </div>
+            </div>
+        }
+        else if (testSuccess.HasValue && testSuccess.Value == true)
+        {
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                <i class="bi bi-check2"></i>
+                <div>
+                    Connection to Sonarr has been established
                 </div>
-            }
+            </div>
+        }
 
-            <hr>
+        <hr>
 
-            <h5>Sonarr Integration</h5>
+        <h5>Sonarr Integration</h5>
 
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="baseUrl" [(ngModel)]="settings.movieSettings.baseUrl">
-                <label for="baseUrl">Base Url</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="apiKey" [(ngModel)]="settings.movieSettings.apiKey">
-                <label for="apiKey">Api Key</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="host" [(ngModel)]="settings.movieSettings.host">
-                <label for="host">Host</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="number" class="form-control" id="port" min="1" maxlength="5" [(ngModel)]="settings.movieSettings.port">
-                <label for="port">Port</label>
-            </div>
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" value="" id="useSsl" [(ngModel)]="settings.movieSettings.useSsl">
-                <label class="form-check-label" for="useSsl">
-                    Use SSL
-                </label>
-            </div>
-
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="baseUrl" @bind-value="integrationOptions.SeriesSettings.BaseUrl">
+            <label for="baseUrl">Base Url</label>
         </div>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="apiKey" @bind-value="integrationOptions.SeriesSettings.ApiKey">
+            <label for="apiKey">Api Key</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="host" @bind-value="integrationOptions.SeriesSettings.Host">
+            <label for="host">Host</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="port" min="1" maxlength="5" @bind-value="integrationOptions.SeriesSettings.Port">
+            <label for="port">Port</label>
+        </div>
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" value="" id="useSsl" @bind="integrationOptions.SeriesSettings.UseSsl">
+            <label class="form-check-label" for="useSsl">
+                Use SSL
+            </label>
+        </div>
+
     </div>
 </div>
 
 @code {
     private bool? testSuccess;
     private bool saveSuccess;
+    private IntegrationOptions integrationOptions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        integrationOptions = _settingsService.GetSettings();
+    }
+
+    private void SaveSettings(MouseEventArgs e)
+    {
+        _settingsService.Update(integrationOptions);
+        saveSuccess = true;
+    }
+
+    private async Task TestSettings(MouseEventArgs e)
+    {
+        testSuccess = await _sonarrService.IsSettingsValid(integrationOptions.SeriesSettings);
+    }
 }
