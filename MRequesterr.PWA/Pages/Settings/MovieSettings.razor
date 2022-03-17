@@ -1,0 +1,100 @@
+﻿@page "/settings/movie"
+@using MRequesterr.Models
+@using MRequesterr.Services
+
+@inject ISettingsService _settingsService
+@inject IRadarrService _radarrService
+
+<nav class="navbar bg-light ml-n1">
+    <div class="container-fluid justify-content-start">
+        <div class="col-md-9">
+            <button type="button" class="btn btn-outline-primary" @onclick="SaveSettings">Save</button>
+            <button type="button" class="btn btn-outline-primary" @onclick="TestSettings">Test Settings</button>
+        </div>
+    </div>
+</nav>
+
+<div class="album py-5 bg-light">
+    <div class="container">
+        <h2>Movies Settings</h2>
+
+        @if (saveSuccess == true)
+        {
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                <i class="bi bi-check2"></i>
+                <div>
+                    Settings was saved succesfully
+                </div>
+            </div>
+        }
+
+        @if (testSuccess.HasValue && testSuccess.Value == false)
+        {
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <i class="bi bi-exclamation-diamond-fill"></i>
+                <div>
+                    Cannot connect to Radarr using the settings provided
+                </div>
+            </div>
+        }
+        else if (testSuccess.HasValue && testSuccess.Value == true)
+        {
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                <i class="bi bi-check2"></i>
+                <div>
+                    Connection to Radarr has been established
+                </div>
+            </div>
+        }
+
+        <hr>
+
+        <h5>Radarr Integration</h5>
+
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="baseUrl" @bind-value="integrationOptions.MovieSettings.BaseUrl">
+            <label for="baseUrl">Base Url</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="apiKey" @bind-value="integrationOptions.MovieSettings.ApiKey">
+            <label for="apiKey">Api Key</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="host" @bind-value="integrationOptions.MovieSettings.Host">
+            <label for="host">Host</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="port" min="1" maxlength="5" @bind-value="integrationOptions.MovieSettings.Port">
+            <label for="port">Port</label>
+        </div>
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" value="" id="useSsl" @bind="integrationOptions.MovieSettings.UseSsl">
+            <label class="form-check-label" for="useSsl">
+                Use SSL
+            </label>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    private bool? testSuccess;
+    private bool saveSuccess;
+    private IntegrationOptions integrationOptions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        integrationOptions = _settingsService.GetSettings();
+    }
+
+    private void SaveSettings(MouseEventArgs e)
+    {
+        _settingsService.Update(integrationOptions);
+        saveSuccess = true;
+    }
+
+    private async Task TestSettings(MouseEventArgs e)
+    {
+        testSuccess = await _radarrService.IsSettingsValid(integrationOptions.MovieSettings);
+    }
+}
