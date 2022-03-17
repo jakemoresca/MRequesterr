@@ -77,7 +77,14 @@
 
         @if (viewType == "Poster")
         {
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" >
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                <Virtualize Items="@movies" Context="movie" ItemSize="290" OverscanCount="25">
+                    @{
+                        var url = imageBaseUrl + movie.Images.FirstOrDefault()?.Url.Replace("/radarr", "") + "&apikey=b6054f51015b496aa5e244246ae35d60";
+                    }
+                    <Card @key="movie.Id" Title="@movie.Title" ImageUrl="@url" Overview="@movie.Overview" ReleasedStatus="@movie.Status" />
+                </Virtualize>
+@*
                 <InfiniteScrolling ItemsProvider="GetItems">
                     <ItemTemplate Context="movie">
                         @{
@@ -88,7 +95,7 @@
                     <LoadingTemplate>
                         <div>Loading...</div>
                     </LoadingTemplate>
-                </InfiniteScrolling>
+                </InfiniteScrolling>*@
             </div>
         }
         else if (viewType == "Table")
