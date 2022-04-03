@@ -6,7 +6,7 @@ namespace MRequesterr.Services
     public interface IRadarrService
     {
         Task<bool> IsSettingsValid(MovieSettings movieSettings);
-        Task<List<MovieDto>> GetMovies();
-        Task<MovieDto> GetMovie(int movieId);
+        Task<List<MediaDto>> GetMovies();
+        Task<MediaDto> GetMovie(int movieId);
     }
 }

@@ -7,10 +7,36 @@ namespace MRequesterr.Services
     public class SonarrService : ISonarrService
     {
         private readonly HttpClient _httpClient;
+        private readonly IntegrationOptions _settingsOptions;
 
-        public SonarrService(HttpClient httpClient)
+        public SonarrService(HttpClient httpClient, ISettingsService settingsService)
         {
             _httpClient = httpClient;
+            _settingsOptions = settingsService.GetSettings();
+        }
+
+        public async Task<List<MediaDto>> GetSeries()
+        {
+            var getSeriesUrl = new Uri(GetServiceUrl(_settingsOptions.SeriesSettings, "/series"));
+            var request = new HttpRequestMessage(HttpMethod.Get, getSeriesUrl);
+
+            var response = await _httpClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var seriesJson = await response.Content.ReadAsStreamAsync();
+
+                var options = new JsonSerializerOptions();
+                options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+
+                var result = await JsonSerializer.DeserializeAsync<List<MediaDto>>(seriesJson, options);
+
+                return result ?? new List<MediaDto>();
+            }
+            else
+            {
+                return new List<MediaDto>();
+            }
         }
 
         public async Task<bool> IsSettingsValid(SeriesSettings seriesSettings)

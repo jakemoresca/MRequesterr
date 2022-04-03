@@ -7,78 +7,54 @@
 @using MRequesterr.PWA.Shared.Card;
 @using MRequesterr.PWA.Shared.Carousel;
 
-@inject IRadarrService _radarrService
+@inject IRadarrService _radarrService;
 @inject ISettingsService _settingsService;
+@inject ISonarrService _sonarrService;
 
 <PageTitle>Now Playing</PageTitle>
 
 
 <div class="album py-5 bg-light">
     <div class="container">
+        <h2>Now Available</h2>
+        <Carousel Items="movies" ImageBaseUrl="@movieImageBaseUrl" BaseUrl="@integrationOptions.MovieSettings.BaseUrl" ApiKey="@integrationOptions.MovieSettings.ApiKey" />
 
-        @if (viewType == "Poster")
-        {
-            /*
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                <Virtualize Items="@movies" Context="movie" ItemSize="290" OverscanCount="50">
-                    @{
-                        var url = imageBaseUrl + movie.Images.FirstOrDefault()?.Url.Replace("/radarr", "") + "&apikey=b6054f51015b496aa5e244246ae35d60";
-                    }
-                    <Card @key="movie.Id" Title="@movie.Title" ImageUrl="@url" Overview="@movie.Overview" ReleasedStatus="@movie.Status" />
-                </Virtualize>
-            </div>*/
-            <h2>Now Available</h2>
-            <Carousel Movies="movies" ImageBaseUrl="@imageBaseUrl" />
-        }
-        else if (viewType == "Table")
-        {
-            <div class="row">
-                <app-movie-table [movies]="movies" [countryFilter]="countryFilter" [filterType]="filterType"
-                             (scanMovie)="scanMovie($event)" [matchedMovies]="matchedMovies"></app-movie-table>
-            </div>
-        }
+        <Carousel Items="series" ImageBaseUrl="@seriesImageBaseUrl" BaseUrl="@integrationOptions.SeriesSettings.BaseUrl" ApiKey="@integrationOptions.SeriesSettings.ApiKey" />
     </div>
 </div>
 
 @code {
-    List<MovieDto> movies = new List<MovieDto>();
+    List<MediaDto> movies = new List<MediaDto>();
+    List<MediaDto> series = new List<MediaDto>();
+
     string viewType = "Poster";
     IntegrationOptions integrationOptions;
-    string imageBaseUrl = string.Empty;
+    string movieImageBaseUrl = string.Empty;
+    string seriesImageBaseUrl = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         integrationOptions = _settingsService.GetSettings();
 
         var movieSettings = integrationOptions.MovieSettings;
+        var seriesSettings = integrationOptions.SeriesSettings;
 
-        var port = movieSettings.Port;
-        var host = movieSettings.Host;
-        var useSsl = movieSettings.UseSsl;
-        var baseUrl = movieSettings.BaseUrl;
-        var protocol = useSsl ? "https://" : "http://";
+        var radarrPort = movieSettings.Port;
+        var radarrHost = movieSettings.Host;
+        var radarrUseSsl = movieSettings.UseSsl;
+        var radarrBaseUrl = movieSettings.BaseUrl;
+        var radarrProtocol = radarrUseSsl ? "https://" : "http://";
 
-        imageBaseUrl = $"{protocol}{host}:{port}/radarr/api/v3/";
+        var sonarrPort = seriesSettings.Port;
+        var sonarrHost = seriesSettings.Host;
+        var sonarrUseSsl = seriesSettings.UseSsl;
+        var sonarrBaseUrl = seriesSettings.BaseUrl;
+        var sonarrProtocol = sonarrUseSsl ? "https://" : "http://";
+
+        movieImageBaseUrl = $"{radarrProtocol}{radarrHost}:{radarrPort}/radarr/api/v3/";
+        seriesImageBaseUrl = $"{sonarrProtocol}{sonarrHost}:{sonarrPort}/sonarr/api/v3/";
 
         movies = await _radarrService.GetMovies();
-    }
-
-    private async Task<IEnumerable<MovieDto>> GetItems(InfiniteScrollingItemsProviderRequest request)
-    {
-        await Task.Delay(1000); // Simulate async loading
-
-        var virtualMovies = movies.OrderBy(x => x.Id).Skip(request.StartIndex).Take(10).ToList();
-
-        return virtualMovies;
-    }
-
-    private async ValueTask<ItemsProviderResult<MovieDto>> LoadMovies(ItemsProviderRequest request)
-    {
-        var numMovies = Math.Min(request.Count, movies.Count - request.StartIndex);
-        var virtualMovies = movies.OrderBy(x => x.Id).Skip(request.StartIndex).Take(numMovies).ToList();
-        //await EmployeesService.GetEmployeesAsync(request.StartIndex,
-        //    numEmployees, request.CancellationToken);
-
-        return new ItemsProviderResult<MovieDto>(virtualMovies, movies.Count);
+        series = await _sonarrService.GetSeries();
     }
 }

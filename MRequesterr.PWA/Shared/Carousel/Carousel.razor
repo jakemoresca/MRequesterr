@@ -6,7 +6,9 @@
     <div class="carousel-item active">
       @foreach (var item in currentItems)
       {
-        var url = ImageBaseUrl + item.Images.FirstOrDefault()?.Url.Replace("/radarr", "") + "&apikey=b6054f51015b496aa5e244246ae35d60";
+        var imageUrl = item.Images.FirstOrDefault(x => x.CoverType == "poster");
+
+        var url = ImageBaseUrl + imageUrl.Url?.Replace(BaseUrl, "") + $"&apikey={ApiKey}";
 
         <Card Title="@item.Title" ImageUrl="@url" />
       }
@@ -25,12 +27,18 @@
 
 @code {
   [Parameter]
-  public List<MovieDto> Movies { get; set; }
+  public List<MediaDto> Items { get; set; }
   
   [Parameter]
   public string ImageBaseUrl { get; set; }
 
-  private List<MovieDto> currentItems = new List<MovieDto>();
+  [Parameter]
+  public string BaseUrl {get; set;}
+
+  [Parameter]
+  public string ApiKey {get; set;}
+
+  private List<MediaDto> currentItems = new List<MediaDto>();
   private int currentPage = 0;
   private int totalPage = 0;
   private int itemsPerPage = 4;
@@ -41,7 +49,7 @@
 
   protected override async Task OnParametersSetAsync()
   {
-    totalPage = Movies.Count / itemsPerPage;
+    totalPage = Items.Count / itemsPerPage;
 
     SetCurrentItems(currentPage);
   }
@@ -57,7 +65,7 @@
       page = totalPage;
     }
 
-    currentItems = Movies.Skip(page * itemsPerPage)
+    currentItems = Items.Skip(page * itemsPerPage)
       .Take(itemsPerPage)
       .ToList();
 

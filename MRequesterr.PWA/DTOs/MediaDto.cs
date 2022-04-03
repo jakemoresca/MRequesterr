@@ -1,6 +1,6 @@
 ﻿namespace MRequesterr.DTOs
 {
-    public class MovieDto
+    public class MediaDto
     {
         public int Id { get; set; }
         public int TmdbId { get; set; }
@@ -15,7 +15,7 @@
         public int ProfileId { get; set; }
         public DateTime? LastInfoSync { get; set; }
         public int Runtime { get; set; }
-        public MovieImage[] Images { get; set; }
+        public MediaImage[] Images { get; set; }
         public string TitleSlug { get; set; }
         public string Website { get; set; }
         public string Path { get; set; }
@@ -23,7 +23,7 @@
         public List<string> Genres { get; set; }
     }
 
-    public class MovieImage
+    public class MediaImage
     {
         public string CoverType { get; set; }
         public string Url { get; set; }

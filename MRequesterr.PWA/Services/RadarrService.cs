@@ -16,7 +16,7 @@ namespace MRequesterr.Services
             _settingsOptions = settingsService.GetSettings();
         }
 
-        public async Task<List<MovieDto>> GetMovies()
+        public async Task<List<MediaDto>> GetMovies()
         {
             var getMovieUrl = new Uri(GetServiceUrl(_settingsOptions.MovieSettings, "/movie"));
             var request = new HttpRequestMessage(HttpMethod.Get, getMovieUrl);
@@ -30,17 +30,17 @@ namespace MRequesterr.Services
                 var options = new JsonSerializerOptions();
                 options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
-                var result = await JsonSerializer.DeserializeAsync<List<MovieDto>>(moviesJson, options);
+                var result = await JsonSerializer.DeserializeAsync<List<MediaDto>>(moviesJson, options);
 
-                return result ?? new List<MovieDto>();
+                return result ?? new List<MediaDto>();
             }
             else
             {
-                return new List<MovieDto>();
+                return new List<MediaDto>();
             }
         }
 
-        public async Task<MovieDto> GetMovie(int movieId)
+        public async Task<MediaDto> GetMovie(int movieId)
         {
             var getMovieUrl = new Uri(GetServiceUrl(_settingsOptions.MovieSettings, $"/movie/{movieId}"));
             var request = new HttpRequestMessage(HttpMethod.Get, getMovieUrl);
@@ -54,13 +54,13 @@ namespace MRequesterr.Services
                 var options = new JsonSerializerOptions();
                 options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
-                var result = await JsonSerializer.DeserializeAsync<MovieDto>(moviesJson, options);
+                var result = await JsonSerializer.DeserializeAsync<MediaDto>(moviesJson, options);
 
-                return result ?? new MovieDto { };
+                return result ?? new MediaDto { };
             }
             else
             {
-                return new MovieDto { };
+                return new MediaDto { };
             }
         }
 
