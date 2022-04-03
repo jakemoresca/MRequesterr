@@ -5,72 +5,12 @@
 @using MRequesterr.Models
 @using MRequesterr.Services
 @using MRequesterr.PWA.Shared.Card;
+@using MRequesterr.PWA.Shared.Carousel;
 
 @inject IRadarrService _radarrService
 @inject ISettingsService _settingsService;
 
 <PageTitle>Now Playing</PageTitle>
-
-<nav class="navbar navbar-dark bg-dark ml-n1">
-    <div class="container-fluid justify-content-start">
-        <div class="col-md-9">
-            <button type="button" class="btn btn-outline-primary" (click)="scanMovies()">Scan All</button>
-        </div>
-
-        <div class="col-md-1">
-            <div class="btn-group">
-                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                    View
-                </button>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a class="dropdown-item" (click)="changeViewType('Table')"
-                           [ngClass]="viewType == 'Table' ? 'active' : ''">Table</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" (click)="changeViewType('Poster')"
-                           [ngClass]="viewType == 'Poster' ? 'active' : ''">Poster</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="col-md-1">
-            <div class="btn-group">
-                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                    Filter
-                </button>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a class="dropdown-item" (click)="changeFilterType('All')"
-                           [ngClass]="filterType == 'All' ? 'active' : ''">All</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" (click)="changeFilterType('Existing')"
-                           [ngClass]="filterType == 'Existing' ? 'active' : ''">Existing</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" (click)="changeFilterType('NotExisting')"
-                           [ngClass]="filterType == 'NotExisting' ? 'active' : ''">Not Existing</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" (click)="changeFilterType('ExistOnOtherCountry')"
-                           [ngClass]="filterType == 'ExistOnOtherCountry' ? 'active' : ''">Exist on other Country</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li>
-                        <a class="dropdown-item" (click)="changeFilterType('Unmonitored')"
-                           [ngClass]="filterType == 'Unmonitored' ? 'active' : ''">Unmonitored</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</nav>
 
 
 <div class="album py-5 bg-light">
@@ -78,6 +18,7 @@
 
         @if (viewType == "Poster")
         {
+            /*
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                 <Virtualize Items="@movies" Context="movie" ItemSize="290" OverscanCount="50">
                     @{
@@ -85,7 +26,9 @@
                     }
                     <Card @key="movie.Id" Title="@movie.Title" ImageUrl="@url" Overview="@movie.Overview" ReleasedStatus="@movie.Status" />
                 </Virtualize>
-            </div>
+            </div>*/
+            <h2>Now Available</h2>
+            <Carousel Movies="movies" ImageBaseUrl="@imageBaseUrl" />
         }
         else if (viewType == "Table")
         {
