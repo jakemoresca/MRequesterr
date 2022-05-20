@@ -1,0 +1,19 @@
+{
+    "integrationSettings": {
+        "movies" : {
+            "baseUrl": "",
+            "apiKey": "",
+            "host": "",
+            "port": 80,
+            "useSsl": false
+        },
+        "series" : {
+            "baseUrl": "",
+            "apiKey": "",
+            "host": "",
+            "port": 80,
+            "useSsl": false
+        },
+        "tmdbApiKey": ""
+    }
+}
