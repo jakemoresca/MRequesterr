@@ -13,5 +13,8 @@ export default async function handler(
 export async function getSettings(): Promise<ISettings> {
     const settings = await import("../../datas/settings.json");
 
+    settings.integrationSettings.movies.apiKey = process.env.RADARR_API_KEY ?? settings.integrationSettings.movies.apiKey;
+    settings.integrationSettings.series.apiKey = process.env.SONARR_API_KEY ?? settings.integrationSettings.movies.apiKey;
+
     return settings.default;
 }

@@ -1,18 +1,18 @@
 {
     "integrationSettings": {
-        "movies" : {
-            "baseUrl": "",
+        "movies": {
+            "baseUrl": "/radarr",
             "apiKey": "",
-            "host": "",
-            "port": 80,
-            "useSsl": false
+            "host": "rydersir.polaris.usbx.me",
+            "port": 443,
+            "useSsl": true
         },
-        "series" : {
-            "baseUrl": "",
+        "series": {
+            "baseUrl": "/sonarr",
             "apiKey": "",
-            "host": "",
-            "port": 80,
-            "useSsl": false
+            "host": "rydersir.polaris.usbx.me",
+            "port": 443,
+            "useSsl": true
         },
         "tmdbApiKey": ""
     }
