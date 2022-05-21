@@ -1,7 +1,7 @@
 import { faBarsProgress, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Badge, Card as BootstrapCard, CardImg, CardImgOverlay } from "reactstrap";
-import { IStatistics } from "../../models/media";
+import { IStatistics } from "../models/media";
 
 export interface ICardProps {
     imageUrl?: string;

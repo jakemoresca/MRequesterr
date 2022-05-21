@@ -6,7 +6,7 @@ import styles from '../styles/Home.module.css'
 import { getMovies } from './api/movies'
 import { getSeries } from './api/series'
 import { getSettings } from './api/settings'
-import LazyCarousel from './components/carousel'
+import LazyCarousel from '../components/carousel'
 
 export interface IHomeProps {
   settings: ISettings;

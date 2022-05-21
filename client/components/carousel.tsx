@@ -1,6 +1,6 @@
 import { NextPage } from "next/types";
 import React from "react";
-import { IMedia } from "../../models/media";
+import { IMedia } from "../models/media";
 import Card from "./card";
 
 export interface ICarouselProps {
