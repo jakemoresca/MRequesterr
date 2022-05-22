@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { IMedia } from '../models/media'
 import { ISettings } from '../models/settings'
 import styles from '../styles/Home.module.css'
-import { getMovies } from './api/movies'
+import { getMovies, getItemTypeAndUrl } from './api/movies'
 import { getSeries } from './api/series'
 import { getSettings } from './api/settings'
 import LazyCarousel from '../components/carousel'
@@ -33,6 +33,14 @@ const Home: NextPage<IHomeProps> = (props) => {
   const movieImageBaseUrl = `${radarrProtocol}${radarrHost}:${radarrPort}/radarr/api/v3/`;
   const seriesImageBaseUrl = `${sonarrProtocol}${sonarrHost}:${sonarrPort}/sonarr/api/v3/`;
 
+  const getRadarrItemTypeAndUrlAction = (media: IMedia) => {
+    return getItemTypeAndUrl(media, radarrBaseUrl, movieImageBaseUrl, movieSettings.apiKey);
+  }
+
+  const getSonarrItemTypeAndUrlAction = (media: IMedia) => {
+    return getItemTypeAndUrl(media, sonarrBaseUrl, seriesImageBaseUrl, seriesSettings.apiKey);
+  }
+
   return (
     <div>
       <Head>
@@ -41,10 +49,10 @@ const Home: NextPage<IHomeProps> = (props) => {
         <div className="container-fluid">
           <h1>Now Available</h1>
           <h3>Movies</h3>
-          <LazyCarousel items={props.movies} imageBaseUrl={movieImageBaseUrl} baseUrl={radarrBaseUrl} apiKey={movieSettings.apiKey} />
+          <LazyCarousel items={props.movies} getItemTypeAndUrl={getRadarrItemTypeAndUrlAction} showProgress={true} />
           <hr />
           <h3>Series</h3>
-          <LazyCarousel items={props.series} imageBaseUrl={seriesImageBaseUrl} baseUrl={sonarrBaseUrl} apiKey={seriesSettings.apiKey} />
+          <LazyCarousel items={props.series} getItemTypeAndUrl={getSonarrItemTypeAndUrlAction} showProgress={true} />
         </div>
     </div>
   )

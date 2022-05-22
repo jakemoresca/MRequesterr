@@ -10,10 +10,10 @@ export interface IMedia
     overview: string;
     monitored: boolean;
     minimumAvailability: string;
-    profileId: number;
+    //profileId: number;
     runtime: number;
     images: IMediaImage[],
-    titleSlug: string;
+    //titleSlug: string;
     path: string;
     year: number;
     genres: string[];

@@ -19,8 +19,7 @@ export async function getMovies(): Promise<IMedia[]> {
 
     const result = await fetch(getMovieUrl);
 
-    if(result.ok)
-    {
+    if (result.ok) {
         return result.json();
     }
 
@@ -38,4 +37,12 @@ const getServiceUrl = (movieSettings: IMovieSettings, relativeServiceUrl: string
     var serviceUrl = `${protocol}${host}:${port}${baseUrl}/api/v3${relativeServiceUrl}?apiKey=${apiKey}`;
 
     return serviceUrl;
+}
+
+export const getItemTypeAndUrl = (media: IMedia, baseUrl: string, imageBaseUrl: string, apiKey: string) => {
+    const imageUrl = media.images.find(image => image.coverType == "poster");
+    const url = imageBaseUrl + imageUrl?.url?.replace(baseUrl, "") + `&apikey=${apiKey}`;
+    const itemType = url.includes("radarr") ? "movie" : "series";
+
+    return { url, itemType };
 }

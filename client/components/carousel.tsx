@@ -5,9 +5,8 @@ import Card from "./card";
 
 export interface ICarouselProps {
     items: IMedia[];
-    imageBaseUrl: string;
-    baseUrl: string;
-    apiKey: string;
+    getItemTypeAndUrl: (media: IMedia) => { itemType: string, url: string };
+    showProgress?: boolean;
 }
 
 export interface ICarouselState {
@@ -47,11 +46,8 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
     }
 
     const cards = currentItems.map((x, index) => {
-        const imageUrl = x.images.find(image => image.coverType == "poster");
-        const url = props.imageBaseUrl + imageUrl?.url?.replace(props.baseUrl, "") + `&apikey=${props.apiKey}`;
-        const itemType = url.includes("radarr") ? "movie" : "series";
-
-        return (<Card key={index} {...x} imageUrl={url} itemType={itemType} />);
+        const {url, itemType} = props.getItemTypeAndUrl(x);
+        return (<Card key={index} {...x} imageUrl={url} itemType={itemType} showProgress={props.showProgress} />);
     });
 
     if(cards.length == 0)

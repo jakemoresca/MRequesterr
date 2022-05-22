@@ -39,3 +39,11 @@ const getServiceUrl = (seriesSettings: ISeriesSettings, relativeServiceUrl: stri
 
     return serviceUrl;
 }
+
+export const getItemTypeAndUrl = (media: IMedia, baseUrl: string, imageBaseUrl: string, apiKey: string) => {
+    const imageUrl = media.images.find(image => image.coverType == "poster");
+    const url = imageBaseUrl + imageUrl?.url?.replace(baseUrl, "") + `&apikey=${apiKey}`;
+    const itemType = url.includes("radarr") ? "movie" : "series";
+
+    return { url, itemType };
+}

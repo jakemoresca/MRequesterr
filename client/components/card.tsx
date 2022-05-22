@@ -9,6 +9,7 @@ export interface ICardProps {
     itemType?: string;
     isAvailable: boolean;
     statistics: IStatistics
+    showProgress?: boolean;
 }
 
 const Card = (props: ICardProps) => {
@@ -44,10 +45,10 @@ const Card = (props: ICardProps) => {
             <Badge color="primary">
                 {props.itemType?.toUpperCase()}
             </Badge>
-            {movieAvailablilityBadge}
-            {seriesAvailabilityBadge}
+            {props.showProgress && movieAvailablilityBadge}
+            {props.showProgress && seriesAvailabilityBadge}
             {
-                !isMovie &&
+                props.showProgress && !isMovie &&
                 props.statistics.percentOfEpisodes < 100 &&
                 <Progress className="col-md-9" style={{ bottom: 10, position: "absolute" }} value={props.statistics.percentOfEpisodes} />
             }
