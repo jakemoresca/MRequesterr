@@ -19,14 +19,14 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
     const [state, setState] = React.useState<ICarouselState>({ currentPage: 0 });
 
     const itemsPerPage = 6;
-    const maxPage = props.items.length / itemsPerPage;
+    const maxPage = props.items.length > 0 ? props.items.length / itemsPerPage : 0;
 
     const currentItems = props.items.filter((item, index) => {
         if (index < state.currentPage * itemsPerPage || index > (state.currentPage * itemsPerPage) + itemsPerPage - 1)
             return null;
         else
             return item;
-    })
+    });
 
     const handleNext = () => {
         const nextPage = state.currentPage + 1;
@@ -54,27 +54,30 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
         return (<Card key={index} {...x} imageUrl={url} itemType={itemType} />);
     });
 
-    return (<div id="carouselExampleControls" className="carousel slide carousel-dark">
+    if(cards.length == 0)
+        return (<></>)
+
+    return (<div className="carousel slide carousel-dark">
         <div className="carousel-inner">
             <div className="carousel-item active" style={{ display: "flex" }}>
                 {cards}
             </div>
         </div>
 
-        <a className="carousel-control-prev" href="#carouselExampleControls" role="button" onClick={handleNext} style={{
+        <a className="carousel-control-prev position-absolute translate-middle" href="#carouselExampleControls" role="button" onClick={handleNext} style={{
             left: 'unset',
             right: 100,
-            top: -50,
+            top: -20,
             bottom: 'unset',
             width: 50
         }}>
             <span className="carousel-control-prev-icon" aria-hidden="true"></span>
             <span className="sr-only">Previous</span>
         </a>
-        <a className="carousel-control-next" href="#carouselExampleControls" role="button" onClick={handlePrev} style={{
+        <a className="carousel-control-next position-absolute translate-middle" href="#carouselExampleControls" role="button" onClick={handlePrev} style={{
             left: 'unset',
             right: 50,
-            top: -50,
+            top: -20,
             bottom: 'unset',
             width: 50
         }}>

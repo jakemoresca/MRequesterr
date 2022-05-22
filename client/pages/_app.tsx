@@ -1,5 +1,6 @@
 import '../styles/globals.css'
-import 'bootstrap/dist/css/bootstrap.css';
+//import 'bootstrap/dist/css/bootstrap.css';
+import "bootswatch/dist/darkly/bootstrap.min.css";
 import type { AppProps } from 'next/app'
 import Layout from '../components/layout';
 import Head from 'next/head';

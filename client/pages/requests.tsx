@@ -8,13 +8,13 @@ import { getSeries } from './api/series'
 import { getSettings } from './api/settings'
 import LazyCarousel from '../components/carousel'
 
-export interface IHomeProps {
+export interface IRequestsProps {
   settings: ISettings;
   movies: IMedia[];
   series: IMedia[];
 }
 
-const Home: NextPage<IHomeProps> = (props) => {
+const Requests: NextPage<IRequestsProps> = (props) => {
   const movieSettings = props.settings.integrationSettings.movies;
   const seriesSettings = props.settings.integrationSettings.series;
 
@@ -36,14 +36,17 @@ const Home: NextPage<IHomeProps> = (props) => {
   return (
     <div>
       <Head>
-        <title>Now Playing</title>
+        <title>Requests</title>
       </Head>
         <div className="container-fluid">
-          <h1>Now Available</h1>
-          <h3>Movies</h3>
+          <h1>Requests</h1>
+
+          { props.movies.length > 0 && <h3>Movies</h3> }
           <LazyCarousel items={props.movies} imageBaseUrl={movieImageBaseUrl} baseUrl={radarrBaseUrl} apiKey={movieSettings.apiKey} />
+
           <hr />
-          <h3>Series</h3>
+
+          { props.series.length > 0 && <h3>Series</h3> }
           <LazyCarousel items={props.series} imageBaseUrl={seriesImageBaseUrl} baseUrl={sonarrBaseUrl} apiKey={seriesSettings.apiKey} />
         </div>
     </div>
@@ -55,10 +58,10 @@ export async function getServerSideProps() {
   const movies = await getMovies();
   const series = await getSeries();
 
-  const availableMovies = movies.filter(x => x.isAvailable == true);
-  const availableSeries = series.filter(x => x.statistics.percentOfEpisodes == 100);
+  const inProgressMovies = movies.filter(x => x.isAvailable == false);
+  const inProgressSeries = series.filter(x => x.statistics.percentOfEpisodes < 100);
 
-  return { props: { movies: availableMovies, series: availableSeries, settings } }
+  return { props: { movies: inProgressMovies, series: inProgressSeries, settings } }
 }
 
-export default Home
+export default Requests

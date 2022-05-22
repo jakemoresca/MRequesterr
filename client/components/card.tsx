@@ -1,6 +1,6 @@
 import { faBarsProgress, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Badge, Card as BootstrapCard, CardImg, CardImgOverlay } from "reactstrap";
+import { Badge, Card as BootstrapCard, CardImg, CardImgOverlay, Progress } from "reactstrap";
 import { IStatistics } from "../models/media";
 
 export interface ICardProps {
@@ -46,7 +46,11 @@ const Card = (props: ICardProps) => {
             </Badge>
             {movieAvailablilityBadge}
             {seriesAvailabilityBadge}
-            {seriesInProgressBadge}
+            {
+                !isMovie &&
+                props.statistics.percentOfEpisodes < 100 &&
+                <Progress className="col-md-9" style={{ bottom: 10, position: "absolute" }} value={props.statistics.percentOfEpisodes} />
+            }
         </CardImgOverlay>
     </BootstrapCard>);
 };

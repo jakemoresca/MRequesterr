@@ -7,14 +7,14 @@ import Sidebar from './sidebar';
 const Layout = (props: { children?: React.ReactNode }) => (
     <React.Fragment>
         <Icons />
-        <NavMenu />
-        <Container fluid={true} style={{display: 'flex'}}>
-            <Sidebar /> 
-            <main>
-                <div className="vw-100">
+        <Container fluid={true} className="d-flex flex-column vh-100 p-0">
+            <NavMenu />
+            <Container fluid={true} className="d-flex flex-row h-100 mh-100 p-0">
+                <Sidebar />
+                <Container fluid={true} className="bg-light h-100 mh-100">
                     {props.children}
-                </div>
-            </main> 
+                </Container>
+            </Container>
         </Container>
     </React.Fragment>
 );

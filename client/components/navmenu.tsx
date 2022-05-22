@@ -1,5 +1,5 @@
 const NavMenu = () => (
-    <header className="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+    <header className="navbar navbar-expand-lg navbar-dark sticky-top bg-primary flex-md-nowrap p-0 shadow mh-100">
         <a className="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">
             <svg className="bi me-2" width="30" height="24" style={{'fill': 'white'}}><use xlinkHref="#bootstrap"></use></svg>
             <span className="fs-5 fw-semibold">MRequesterr</span>
