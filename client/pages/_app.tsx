@@ -6,16 +6,19 @@ import Layout from '../components/layout';
 import Head from 'next/head';
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
+import { RecoilRoot } from 'recoil';
 
 config.autoAddCss = true
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Layout>
-      <Head>
-        <title>MRequesterr</title>
-      </Head>
-      <Component {...pageProps} />
-    </Layout>
+    <RecoilRoot>
+      <Layout>
+        <Head>
+          <title>MRequesterr</title>
+        </Head>
+        <Component {...pageProps} />
+      </Layout>
+    </RecoilRoot>
   );
 }

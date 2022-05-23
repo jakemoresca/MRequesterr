@@ -6,6 +6,8 @@ import Card from "./card";
 export interface ICarouselProps {
     items: IMedia[];
     getItemTypeAndUrl: (media: IMedia) => { itemType: string, url: string };
+    handleNext?: (page: number) => void;
+    handlePrev?: (page: number) => void;
     showProgress?: boolean;
 }
 
@@ -33,7 +35,9 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
         if (nextPage > maxPage)
             setState({ currentPage: 0 });
         else
-            setState({ currentPage: state.currentPage + 1 });
+            setState({ currentPage: nextPage });
+
+        props.handleNext && props.handleNext(nextPage);
     }
 
     const handlePrev = () => {
@@ -55,7 +59,7 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
 
     return (<div className="carousel slide">
         <div className="carousel-inner">
-            <div className="carousel-item active d-flex row row-cols-sm-2 rows-cols-xs-2 row-cols-md-6">
+            <div className="carousel-item active d-flex row row-cols-sm-2 row-cols-md-6">
                 {cards}
             </div>
         </div>

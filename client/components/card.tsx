@@ -30,7 +30,7 @@ const Card = (props: ICardProps) => {
             <FontAwesomeIcon icon={faBarsProgress} />
         </Badge> : <></>;
 
-    return (<BootstrapCard color="light" outline className="col bg-light"> 
+    return (<BootstrapCard color="light" outline className="col bg-light col-6"> 
         {
             props.imageUrl ?
                 <CardImg alt={props.title} src={props.imageUrl} top width="100%" /> :

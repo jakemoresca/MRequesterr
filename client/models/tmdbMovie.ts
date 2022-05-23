@@ -10,6 +10,8 @@ export interface ITmdbMovieResult {
     overview: string;
     release_date: string;
     id: number;
-    original_title: string;
-    title: string;
+    original_title?: string;
+    title?: string;
+    name?: string;
+    original_name?: string;
 }
