@@ -50,7 +50,7 @@ const Card = (props: ICardProps) => {
             {
                 props.showProgress && !isMovie &&
                 props.statistics.percentOfEpisodes < 100 &&
-                <Progress className="col-md-9" style={{ bottom: 10, position: "absolute" }} value={props.statistics.percentOfEpisodes} />
+                <Progress className="col-md-9 bg-dark" style={{ bottom: 10, position: "absolute" }} value={props.statistics.percentOfEpisodes} />
             }
         </CardImgOverlay>
     </BootstrapCard>);
