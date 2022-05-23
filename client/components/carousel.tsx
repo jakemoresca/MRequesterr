@@ -53,9 +53,9 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
     if(cards.length == 0)
         return (<></>)
 
-    return (<div className="carousel slide carousel-dark">
+    return (<div className="carousel slide">
         <div className="carousel-inner">
-            <div className="carousel-item active" style={{ display: "flex" }}>
+            <div className="carousel-item active d-flex row row-cols-sm-2 rows-cols-xs-2 row-cols-md-6">
                 {cards}
             </div>
         </div>

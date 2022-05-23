@@ -30,11 +30,10 @@ const Card = (props: ICardProps) => {
             <FontAwesomeIcon icon={faBarsProgress} />
         </Badge> : <></>;
 
-    return (<BootstrapCard color="light" outline className="col-md-2 shadow-sm" style={{ height: 231, width: 157 }}>
+    return (<BootstrapCard color="light" outline className="col bg-light"> 
         {
             props.imageUrl ?
                 <CardImg alt={props.title} src={props.imageUrl} top width="100%" /> :
-                //<Image src={props.imageUrl} className="card-img-top align-self-center" alt={props.title} height={231} width={157}></Image> :
                 (<svg className="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg"
                     role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
                     <title>{props.title}</title>
@@ -47,6 +46,7 @@ const Card = (props: ICardProps) => {
             </Badge>
             {props.showProgress && movieAvailablilityBadge}
             {props.showProgress && seriesAvailabilityBadge}
+            {props.showProgress && seriesInProgressBadge}
             {
                 props.showProgress && !isMovie &&
                 props.statistics.percentOfEpisodes < 100 &&
