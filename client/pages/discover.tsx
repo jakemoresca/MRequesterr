@@ -7,7 +7,7 @@ import { getMovies } from './api/movies'
 import { getSeries } from './api/series'
 import { getSettings } from './api/settings'
 import LazyCarousel from '../components/carousel'
-import { getImage, getPopularMovies, getPopularSeries } from './api/tmdb'
+import { convertToMedia, getImage, getPopularMovies, getPopularSeries } from './api/tmdb'
 import { ITmdbMovieResult } from '../models/tmdbMovie'
 import { faGaugeSimpleMed } from '@fortawesome/free-solid-svg-icons'
 import { SetterOrUpdater, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
@@ -99,33 +99,6 @@ async function fetchData(setMovieState: SetterOrUpdater<IPopularMoviesState>, se
 
   setSeriesState({ series, currentPage: popularSeries.page });
   setMovieState({ movies, currentPage: popularMovies.page });
-}
-
-function convertToMedia(tmdbMovie: ITmdbMovieResult): IMedia
-{
-  const title = tmdbMovie.title || tmdbMovie.name || "NO TITLE";
-
-  return {
-    ...tmdbMovie,
-    id: tmdbMovie.id.toString(),
-    tmdbId: tmdbMovie.id.toString(),
-    imdbId: "",
-    cleanTitle: title,
-    sortTitle: title,
-    title,
-    status: "",
-    monitored: false,
-    minimumAvailability: "",
-    runtime: 0,
-    images: [{ coverType: "poster", url: getImage(tmdbMovie.poster_path ?? "")}],
-    path: "",
-    year: 0,
-    genres: [],
-    isAvailable: false,
-    statistics: {
-      percentOfEpisodes: 0
-    }
-  }
 }
 
 export default Discover;

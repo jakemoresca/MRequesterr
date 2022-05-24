@@ -1,5 +1,6 @@
 import { NextPage } from "next/types";
 import React from "react";
+import { Button, Container } from "reactstrap";
 import { IMedia } from "../models/media";
 import Card from "./card";
 
@@ -57,33 +58,20 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
     if(cards.length == 0)
         return (<></>)
 
-    return (<div className="carousel slide">
+    return (<div className="carousel slide d-flex flex-column">
+        <Container className="d-flex">
+            <Button onClick={handleNext}>
+                Prev
+            </Button>
+            <Button onClick={handlePrev}>
+                Next
+            </Button>
+        </Container>
         <div className="carousel-inner">
             <div className="carousel-item active d-flex row row-cols-sm-2 row-cols-md-6">
                 {cards}
             </div>
         </div>
-
-        <a className="carousel-control-prev position-absolute translate-middle" href="#carouselExampleControls" role="button" onClick={handleNext} style={{
-            left: 'unset',
-            right: 100,
-            top: -20,
-            bottom: 'unset',
-            width: 50
-        }}>
-            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span className="sr-only">Previous</span>
-        </a>
-        <a className="carousel-control-next position-absolute translate-middle" href="#carouselExampleControls" role="button" onClick={handlePrev} style={{
-            left: 'unset',
-            right: 50,
-            top: -20,
-            bottom: 'unset',
-            width: 50
-        }}>
-            <span className="carousel-control-next-icon" aria-hidden="true"></span>
-            <span className="sr-only">Next</span>
-        </a>
     </div>);
 }
 

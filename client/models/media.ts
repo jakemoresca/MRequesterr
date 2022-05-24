@@ -1,8 +1,9 @@
 export interface IMedia 
 {
     id: string;
-    tmdbId: string;
+    tmdbId?: string;
     imdbId: string;
+    tvdbId?: string;
     title: string;
     cleanTitle: string;
     sortTitle: string;
