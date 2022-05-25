@@ -48,11 +48,9 @@ const Home: NextPage<IHomeProps> = (props) => {
       </Head>
         <div className="container-fluid">
           <h1>Now Available</h1>
-          <h3>Movies</h3>
-          <LazyCarousel items={props.movies} getItemTypeAndUrl={getRadarrItemTypeAndUrlAction} showProgress={true} />
+          <LazyCarousel items={props.movies} getItemTypeAndUrl={getRadarrItemTypeAndUrlAction} showProgress={true} title="Movies" />
           <hr />
-          <h3>Series</h3>
-          <LazyCarousel items={props.series} getItemTypeAndUrl={getSonarrItemTypeAndUrlAction} showProgress={true} />
+          <LazyCarousel items={props.series} getItemTypeAndUrl={getSonarrItemTypeAndUrlAction} showProgress={true} title="Series" />
         </div>
     </div>
   )

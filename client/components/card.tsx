@@ -1,7 +1,6 @@
 import { faBarsProgress, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { Badge, Card as BootstrapCard, CardImg, CardImgOverlay, Progress } from "reactstrap";
 import { IStatistics } from "../models/media";
 
@@ -18,7 +17,6 @@ export interface ICardProps {
 
 const Card = (props: ICardProps) => {
     const isMovie = props.itemType == "movie";
-    const router = useRouter();
 
     const movieAvailablilityBadge = isMovie && props.isAvailable ?
         <Badge color="success" style={{ float: "right" }}>
@@ -35,9 +33,9 @@ const Card = (props: ICardProps) => {
             <FontAwesomeIcon icon={faBarsProgress} />
         </Badge> : <></>;
 
-    const linkHref = props.tmdbId ? `/movies/${props.tmdbId}` : `/tv/${props.title}`
+    const linkHref = isMovie ? `/movies/${props.tmdbId ?? ""}` : `/tv/${props.title}`;
 
-    return (<Link href={linkHref}>
+    return (
         <BootstrapCard color="light" outline className="col bg-light col-6">
             {
                 props.imageUrl ?
@@ -60,8 +58,11 @@ const Card = (props: ICardProps) => {
                     props.statistics.percentOfEpisodes < 100 &&
                     <Progress className="col-md-9 bg-dark" style={{ bottom: 10, position: "absolute" }} value={props.statistics.percentOfEpisodes} />
                 }
+                <Link href={linkHref}>
+                    View
+                </Link>
             </CardImgOverlay>
-        </BootstrapCard></Link>);
+        </BootstrapCard>);
 };
 
 export default Card;

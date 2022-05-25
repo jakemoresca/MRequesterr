@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { IMedia } from '../../models/media';
-import { IMovieSettings } from '../../models/settings'
+import { IMovieSettings, ISettings } from '../../models/settings'
 import { getSettings } from './settings';
 
 export default async function handler(
@@ -12,8 +12,8 @@ export default async function handler(
     res.status(200).json(movies)
 }
 
-export async function getMovies(): Promise<IMedia[]> {
-    const settings = await getSettings();
+export async function getMovies(overrideSettings?: ISettings): Promise<IMedia[]> {
+    const settings = overrideSettings ?? await getSettings();
 
     const getMovieUrl = getServiceUrl(settings.integrationSettings.movies, "/movie");
 

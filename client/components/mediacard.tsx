@@ -22,9 +22,11 @@ const MediaCard = (props: IMediaCardProps) => {
                     <CardSubtitle className="mb-2 text-muted" tag="h6">
                         {media?.overview}
                     </CardSubtitle>
-                    <Button color="primary">
-                        Request
-                    </Button>
+                    {!media?.isAvailable &&
+                        <Button color="primary">
+                            Request
+                        </Button>
+                    }
                 </CardBody>
             </div>
         </div>

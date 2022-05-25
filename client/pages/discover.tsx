@@ -1,16 +1,9 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { IMedia } from '../models/media'
-import { ISettings } from '../models/settings'
-import styles from '../styles/Home.module.css'
-import { getMovies } from './api/movies'
-import { getSeries } from './api/series'
-import { getSettings } from './api/settings'
 import LazyCarousel from '../components/carousel'
-import { convertToMedia, getImage, getPopularMovies, getPopularSeries } from './api/tmdb'
-import { ITmdbMovieResult } from '../models/tmdbMovie'
-import { faGaugeSimpleMed } from '@fortawesome/free-solid-svg-icons'
-import { SetterOrUpdater, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { convertToMedia, getPopularMovies, getPopularSeries } from './api/tmdb'
+import { SetterOrUpdater, useRecoilState } from 'recoil'
 import { IPopularMoviesState, IPopularSeriesState, popularMoviesState, popularSeriesState } from '../states/discover'
 import { useEffect } from 'react'
 
@@ -77,14 +70,9 @@ const Discover: NextPage = () => {
         <title>Discover</title>
       </Head>
         <div className="container-fluid">
-          <h1>Discover</h1>
-          { moviesState.movies.length > 0 && <h3>Movies</h3> }
-          <LazyCarousel items={moviesState.movies} handleNext={handleNextMovie} getItemTypeAndUrl={getItemTypeAndUrlMovie} />
-
+          <LazyCarousel items={moviesState.movies} handleNext={handleNextMovie} getItemTypeAndUrl={getItemTypeAndUrlMovie} title="Movies" />
           <hr />
-
-          { seriesState.series.length > 0 && <h3>Series</h3> }
-          <LazyCarousel items={seriesState.series} handleNext={handleNextSeries} getItemTypeAndUrl={getItemTypeAndUrlSeries} />
+          <LazyCarousel items={seriesState.series} handleNext={handleNextSeries} getItemTypeAndUrl={getItemTypeAndUrlSeries} title="Series" />
         </div>
     </div>
   )

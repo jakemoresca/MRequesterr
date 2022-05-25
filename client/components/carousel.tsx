@@ -1,3 +1,5 @@
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NextPage } from "next/types";
 import React from "react";
 import { Button, Container } from "reactstrap";
@@ -10,6 +12,7 @@ export interface ICarouselProps {
     handleNext?: (page: number) => void;
     handlePrev?: (page: number) => void;
     showProgress?: boolean;
+    title?: string;
 }
 
 export interface ICarouselState {
@@ -51,20 +54,21 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
     }
 
     const cards = currentItems.map((x, index) => {
-        const {url, itemType} = props.getItemTypeAndUrl(x);
+        const { url, itemType } = props.getItemTypeAndUrl(x);
         return (<Card key={index} {...x} imageUrl={url} itemType={itemType} showProgress={props.showProgress} />);
     });
 
-    if(cards.length == 0)
+    if (cards.length == 0)
         return (<></>)
 
     return (<div className="carousel slide d-flex flex-column">
-        <Container className="d-flex">
-            <Button onClick={handleNext}>
-                Prev
+        <Container className="py-3" fluid>
+            <h3 className="float-start">{props.title}</h3>
+            <Button onClick={handlePrev} className="float-end">
+                Next <FontAwesomeIcon icon={faAngleRight} />
             </Button>
-            <Button onClick={handlePrev}>
-                Next
+            <Button onClick={handleNext} className="float-end">
+                <FontAwesomeIcon icon={faAngleLeft} /> Prev
             </Button>
         </Container>
         <div className="carousel-inner">

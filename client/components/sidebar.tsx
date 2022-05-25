@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button, Nav, NavItem, NavLink } from "reactstrap";
+import { Nav, NavItem, NavLink } from "reactstrap";
 
 const Sidebar = () => (
     <Nav vertical pills className="bg-primary col-md-2">
