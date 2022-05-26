@@ -22,7 +22,7 @@ export async function getPopularMovies(page?: number): Promise<ITmdbMovie> {
         return result.json();
     }
 
-    throw "Error retrieving Popular Movies"
+    throw new Error("Error retrieving Popular Movies");
 }
 
 export async function getPopularSeries(page?: number): Promise<ITmdbMovie> {
@@ -34,7 +34,7 @@ export async function getPopularSeries(page?: number): Promise<ITmdbMovie> {
         return result.json();
     }
 
-    throw "Error retrieving Popular Series"
+    throw new Error("Error retrieving Popular Series");
 }
 
 export async function getMovie(tmdbId: string): Promise<ITmdbMovieResult> {
@@ -44,7 +44,7 @@ export async function getMovie(tmdbId: string): Promise<ITmdbMovieResult> {
         return result.json();
     }
 
-    throw "Error retrieving Movie"
+    throw new Error("Error retrieving Movie");
 }
 
 export async function getSeries(title: string): Promise<ITmdbMovieResult> {
@@ -56,7 +56,7 @@ export async function getSeries(title: string): Promise<ITmdbMovieResult> {
         return (await results).results[0];
     }
 
-    throw "Error retrieving Series"
+    throw new Error("Error retrieving Series");
 }
 
 export function getImage(file: string) {

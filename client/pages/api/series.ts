@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { IMedia } from '../../models/media';
 import { ISeriesSettings, ISettings } from '../../models/settings'
+import { ISonarrRootFolder, ISonarrSeries } from '../../models/sonarrSeries';
 import { getSettings } from './settings';
 
 export default async function handler(
@@ -19,15 +20,43 @@ export async function getSeries(overrideSettings?: ISettings): Promise<IMedia[]>
 
     const result = await fetch(getSeriesUrl);
 
-    if(result.ok)
-    {
+    if (result.ok) {
         return result.json();
     }
 
     return [];
 }
 
-const getServiceUrl = (seriesSettings: ISeriesSettings, relativeServiceUrl: string) => {
+export async function getSeriesLookup(overrideSettings?: ISettings, title?: string): Promise<ISonarrSeries> {
+    const settings = overrideSettings ?? await getSettings();
+    const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, `/series/lookup`, `&term=${title}`);
+
+    const result = await fetch(getSeriesUrl);
+
+    if (result.ok) {
+        const results: Promise<ISonarrSeries[]> = result.json();
+
+        return (await results)[0];
+    }
+
+    throw new Error("Error retrieving Series");
+}
+
+export async function getRootFolder(overrideSettings?: ISettings): Promise<ISonarrRootFolder> {
+    const settings = overrideSettings ?? await getSettings();
+
+    const getRootFolder = getServiceUrl(settings.integrationSettings.series, "/rootfolder");
+
+    const result = await fetch(getRootFolder);
+
+    if (result.ok) {
+        return result.json();
+    }
+
+    return { path: "", accessible: false };
+}
+
+const getServiceUrl = (seriesSettings: ISeriesSettings, relativeServiceUrl: string, queryString?: string) => {
     var apiKey = seriesSettings.apiKey;
     var port = seriesSettings.port;
     var host = seriesSettings.host;
@@ -36,6 +65,10 @@ const getServiceUrl = (seriesSettings: ISeriesSettings, relativeServiceUrl: stri
     var protocol = useSsl ? "https://" : "http://";
 
     var serviceUrl = `${protocol}${host}:${port}${baseUrl}/api/v3${relativeServiceUrl}?apiKey=${apiKey}`;
+
+    if (queryString) {
+        serviceUrl = serviceUrl.concat(queryString);
+    }
 
     return serviceUrl;
 }

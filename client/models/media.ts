@@ -1,3 +1,5 @@
+import { ISonarrSeries } from "./sonarrSeries";
+
 export interface IMedia 
 {
     id: string;
@@ -20,7 +22,10 @@ export interface IMedia
     genres: string[];
     isAvailable: boolean;
     statistics: IStatistics;
+    additionalInfo?: AdditionalMediaInfo;
 }
+
+export type AdditionalMediaInfo = ISonarrSeries | undefined;
 
 export interface IMediaImage 
 {
