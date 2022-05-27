@@ -8,7 +8,8 @@ import { convertToMedia, getSeries } from '../api/tmdb';
 import { getSeries as getSonarrSeries, getSeriesLookup } from '../api/series';
 import { ISettings } from '../../models/settings';
 import { getSettings } from '../api/settings';
-import { Button, Card, CardBody, CardSubtitle, CardText, CardTitle, Container, Form, FormGroup, Input, Label, Progress, Row } from 'reactstrap';
+import { Card, CardBody, CardSubtitle, CardTitle, Container, Input, Label, Progress } from 'reactstrap';
+import { ISonarrSeries } from '../../models/sonarrSeries';
 
 export interface ITVProps {
     settings: ISettings;
@@ -40,7 +41,7 @@ const TV: NextPage<ITVProps> = (props) => {
                         Please select the season to monitor and download:
                     </CardSubtitle>
                     {
-                        media?.additionalInfo && media.additionalInfo.seasons.map((season, x) => {
+                        media?.additionalInfo && (media.additionalInfo as ISonarrSeries).seasons.map((season, x) => {
                             return (
                                 <div key={x}>
                                     <Input type="checkbox" checked={season.monitored} onChange={handleCheck} />

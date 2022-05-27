@@ -81,9 +81,10 @@ export function convertToMedia(tmdbMovie: ITmdbMovieResult): IMedia
     runtime: 0,
     images: [{ coverType: "poster", url: getImage(tmdbMovie.poster_path ?? "")}],
     path: "",
-    year: 0,
+    year: tmdbMovie.release_date ? new Date(tmdbMovie.release_date).getFullYear() : new Date(tmdbMovie?.first_air_date ?? "").getFullYear(),
     genres: [],
     isAvailable: false,
+    hasFile: false,
     statistics: {
       percentOfEpisodes: 0
     }

@@ -20,6 +20,9 @@ const MediaCard = (props: IMediaCardProps) => {
                         {media?.title}
                     </CardTitle>
                     <CardSubtitle className="mb-2 text-muted" tag="h6">
+                        {media?.year}
+                    </CardSubtitle>
+                    <CardSubtitle className="mb-2 text-muted" tag="h6">
                         {media?.overview}
                     </CardSubtitle>
                     {!media?.isAvailable &&

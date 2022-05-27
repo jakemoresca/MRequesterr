@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { IMedia } from '../../models/media';
+import { IRadarrQueue } from '../../models/radarrMovies';
 import { IMovieSettings, ISettings } from '../../models/settings'
 import { getSettings } from './settings';
 
@@ -26,7 +27,20 @@ export async function getMovies(overrideSettings?: ISettings): Promise<IMedia[]>
     return [];
 }
 
-const getServiceUrl = (movieSettings: IMovieSettings, relativeServiceUrl: string) => {
+export async function getQueue(overrideSettings?: ISettings): Promise<IRadarrQueue> {
+    const settings = overrideSettings ?? await getSettings();
+    const getQueueUrl = getServiceUrl(settings.integrationSettings.movies, "/queue", "&pageSize=20&includeUnknownMovieItems=false");
+
+    const result = await fetch(getQueueUrl);
+
+    if (result.ok) {
+        return result.json();
+    }
+
+    throw new Error("Cannot get Radarr Queue")
+}
+
+const getServiceUrl = (movieSettings: IMovieSettings, relativeServiceUrl: string, queryString?: string) => {
     var apiKey = movieSettings.apiKey;
     var port = movieSettings.port;
     var host = movieSettings.host;
@@ -35,6 +49,10 @@ const getServiceUrl = (movieSettings: IMovieSettings, relativeServiceUrl: string
     var protocol = useSsl ? "https://" : "http://";
 
     var serviceUrl = `${protocol}${host}:${port}${baseUrl}/api/v3${relativeServiceUrl}?apiKey=${apiKey}`;
+
+    if (queryString) {
+        serviceUrl = serviceUrl.concat(queryString);
+    }
 
     return serviceUrl;
 }

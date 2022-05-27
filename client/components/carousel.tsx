@@ -24,13 +24,13 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
     const [state, setState] = React.useState<ICarouselState>({ currentPage: 0 });
 
     const itemsPerPage = 6;
-    const maxPage = props.items.length > 0 ? props.items.length / itemsPerPage : 0;
+    const maxPage = Math.ceil(props.items.length > 0 ? props.items.length / itemsPerPage : 0);
 
     const currentItems = props.items.filter((item, index) => {
-        if (index < state.currentPage * itemsPerPage || index > (state.currentPage * itemsPerPage) + itemsPerPage - 1)
-            return null;
-        else
+        if(index >= state.currentPage * itemsPerPage && index < (state.currentPage + 1) * itemsPerPage)
             return item;
+        else
+            return null;
     });
 
     const handleNext = () => {
@@ -45,12 +45,12 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
     }
 
     const handlePrev = () => {
-        const nextPage = state.currentPage + 1;
+        const nextPage = state.currentPage - 1;
 
-        if (nextPage > maxPage)
+        if (nextPage < 0)
             setState({ currentPage: 0 });
         else
-            setState({ currentPage: state.currentPage + 1 });
+            setState({ currentPage: nextPage });
     }
 
     const cards = currentItems.map((x, index) => {
@@ -64,10 +64,10 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
     return (<div className="carousel slide d-flex flex-column">
         <Container className="py-3" fluid>
             <h3 className="float-start">{props.title}</h3>
-            <Button onClick={handlePrev} className="float-end">
+            <Button onClick={handleNext} className="float-end" disabled={state.currentPage == maxPage - 1}>
                 Next <FontAwesomeIcon icon={faAngleRight} />
             </Button>
-            <Button onClick={handleNext} className="float-end">
+            <Button onClick={handlePrev} className="float-end" disabled={state.currentPage == 0}>
                 <FontAwesomeIcon icon={faAngleLeft} /> Prev
             </Button>
         </Container>

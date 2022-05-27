@@ -1,3 +1,4 @@
+import { RadarrQueueRecord } from "./radarrMovies";
 import { ISonarrSeries } from "./sonarrSeries";
 
 export interface IMedia 
@@ -21,11 +22,13 @@ export interface IMedia
     year: number;
     genres: string[];
     isAvailable: boolean;
+    hasFile: boolean;
     statistics: IStatistics;
     additionalInfo?: AdditionalMediaInfo;
+    movieFile?: MovieFile;
 }
 
-export type AdditionalMediaInfo = ISonarrSeries | undefined;
+export type AdditionalMediaInfo = ISonarrSeries | RadarrQueueRecord | undefined;
 
 export interface IMediaImage 
 {
@@ -36,4 +39,62 @@ export interface IMediaImage
 export interface IStatistics 
 {
     percentOfEpisodes: number;
+}
+
+export interface MovieFile {
+    movieId:             number;
+    relativePath:        string;
+    path:                string;
+    size:                number;
+    dateAdded:           Date;
+    indexerFlags:        number;
+    quality:             Welcome4Quality;
+    mediaInfo:           MediaInfo;
+    originalFilePath:    string;
+    qualityCutoffNotMet: boolean;
+    languages:           Language[];
+    releaseGroup:        string;
+    edition:             string;
+    id:                  number;
+}
+
+export interface Language {
+    id:   number;
+    name: string;
+}
+
+export interface MediaInfo {
+    audioBitrate:          number;
+    audioChannels:         number;
+    audioCodec:            string;
+    audioLanguages:        string;
+    audioStreamCount:      number;
+    videoBitDepth:         number;
+    videoBitrate:          number;
+    videoCodec:            string;
+    videoDynamicRangeType: string;
+    videoFps:              number;
+    resolution:            string;
+    runTime:               string;
+    scanType:              string;
+    subtitles:             string;
+}
+
+export interface Welcome4Quality {
+    quality:  QualityQuality;
+    revision: Revision;
+}
+
+export interface QualityQuality {
+    id:         number;
+    name:       string;
+    source:     string;
+    resolution: number;
+    modifier:   string;
+}
+
+export interface Revision {
+    version:  number;
+    real:     number;
+    isRepack: boolean;
 }

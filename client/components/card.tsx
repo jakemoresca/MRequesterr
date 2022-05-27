@@ -13,12 +13,13 @@ export interface ICardProps {
     showProgress?: boolean;
     tmdbId?: string;
     tvdbId?: string;
+    hasFile: boolean;
 }
 
 const Card = (props: ICardProps) => {
     const isMovie = props.itemType == "movie";
 
-    const movieAvailablilityBadge = isMovie && props.isAvailable ?
+    const movieAvailablilityBadge = isMovie && props.hasFile ?
         <Badge color="success" style={{ float: "right" }}>
             <FontAwesomeIcon icon={faCheck} />
         </Badge> : <></>;

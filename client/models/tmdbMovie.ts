@@ -14,4 +14,5 @@ export interface ITmdbMovieResult {
     title?: string;
     name?: string;
     original_name?: string;
+    first_air_date?: string;
 }

@@ -46,15 +46,9 @@ const Requests: NextPage<IRequestsProps> = (props) => {
         <title>Requests</title>
       </Head>
         <div className="container-fluid">
-          <h1>Requests</h1>
-
-          { props.movies.length > 0 && <h3>Movies</h3> }
-          <LazyCarousel items={props.movies} getItemTypeAndUrl={getRadarrItemTypeAndUrlAction} showProgress={true} />
-
+          <LazyCarousel items={props.movies} getItemTypeAndUrl={getRadarrItemTypeAndUrlAction} showProgress={true} title="Movies" />
           <hr />
-
-          { props.series.length > 0 && <h3>Series</h3> }
-          <LazyCarousel items={props.series} getItemTypeAndUrl={getSonarrItemTypeAndUrlAction} showProgress={true} />
+          <LazyCarousel items={props.series} getItemTypeAndUrl={getSonarrItemTypeAndUrlAction} showProgress={true} title="Series" />
         </div>
     </div>
   )
@@ -65,7 +59,7 @@ export async function getServerSideProps() {
   const movies = await getMovies();
   const series = await getSeries();
 
-  const inProgressMovies = movies.filter(x => x.isAvailable == false);
+  const inProgressMovies = movies.filter(x => !x.hasFile);
   const inProgressSeries = series.filter(x => x.statistics.percentOfEpisodes < 100);
 
   return { props: { movies: inProgressMovies, series: inProgressSeries, settings } }

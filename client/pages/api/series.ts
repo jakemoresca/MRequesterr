@@ -45,9 +45,9 @@ export async function getSeriesLookup(overrideSettings?: ISettings, title?: stri
 export async function getRootFolder(overrideSettings?: ISettings): Promise<ISonarrRootFolder> {
     const settings = overrideSettings ?? await getSettings();
 
-    const getRootFolder = getServiceUrl(settings.integrationSettings.series, "/rootfolder");
+    const getRootFolderUrl = getServiceUrl(settings.integrationSettings.series, "/rootfolder");
 
-    const result = await fetch(getRootFolder);
+    const result = await fetch(getRootFolderUrl);
 
     if (result.ok) {
         return result.json();
