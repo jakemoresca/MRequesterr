@@ -8,8 +8,7 @@ import { convertToMedia, getMovie } from '../api/tmdb';
 import { getMovies as getRadarrMovies, getQueue } from '../api/movies';
 import { ISettings } from '../../models/settings';
 import { getSettings } from '../api/settings';
-import { Container, Card, CardBody, CardTitle, CardSubtitle, Input, Label, Progress, Table } from 'reactstrap';
-import { ISonarrSeries } from '../../models/sonarrSeries';
+import { Container, Card, CardBody, CardTitle, Progress, Table } from 'reactstrap';
 import { RadarrQueueRecord } from '../../models/radarrMovies';
 
 export interface IMovieProps {

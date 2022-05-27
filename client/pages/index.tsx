@@ -60,7 +60,7 @@ export async function getServerSideProps() {
   const movies = await getMovies();
   const series = await getSeries();
 
-  const availableMovies = movies.filter(x => x.isAvailable == true);
+  const availableMovies = movies.filter(x => x.hasFile);
   const availableSeries = series.filter(x => x.statistics.percentOfEpisodes == 100);
 
   return { props: { movies: availableMovies, series: availableSeries, settings } }

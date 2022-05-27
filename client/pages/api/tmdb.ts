@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { IMedia } from '../../models/media';
 import { ITmdbMovie, ITmdbMovieResult } from '../../models/tmdbMovie';
+import { ITmdbSearch, ITmdbSearchResult } from '../../models/tmdbSearch';
 
 const apiKey = "31140dcf74785b0d8b68a678b8057587";
 
@@ -59,6 +60,18 @@ export async function getSeries(title: string): Promise<ITmdbMovieResult> {
     throw new Error("Error retrieving Series");
 }
 
+export async function searchTmdb(query: string): Promise<ITmdbSearchResult[]> {
+    const result = await fetch(`https://api.themoviedb.org/3/search/multi?query=${query}&api_key=${apiKey}&language=en-US`);
+
+    if (result.ok) {
+        const searchResult: Promise<ITmdbSearch> = result.json();
+
+        return (await searchResult).results;
+    }
+
+    throw new Error("Error Searching");
+}
+
 export function getImage(file: string) {
     return `https://www.themoviedb.org/t/p/w500/${file}`
 }
@@ -82,6 +95,35 @@ export function convertToMedia(tmdbMovie: ITmdbMovieResult): IMedia
     images: [{ coverType: "poster", url: getImage(tmdbMovie.poster_path ?? "")}],
     path: "",
     year: tmdbMovie.release_date ? new Date(tmdbMovie.release_date).getFullYear() : new Date(tmdbMovie?.first_air_date ?? "").getFullYear(),
+    genres: [],
+    isAvailable: false,
+    hasFile: false,
+    statistics: {
+      percentOfEpisodes: 0
+    }
+  }
+}
+
+export function convertSearchResultToMedia(tmdbSearchResult: ITmdbSearchResult): IMedia
+{
+  const title = tmdbSearchResult.title || tmdbSearchResult.name || "NO TITLE";
+
+  return {
+    ...tmdbSearchResult,
+    id: tmdbSearchResult.id.toString(),
+    tmdbId: tmdbSearchResult.id.toString(),
+    overview: tmdbSearchResult?.overview ?? "",
+    imdbId: "",
+    cleanTitle: title,
+    sortTitle: title,
+    title,
+    status: "",
+    monitored: false,
+    minimumAvailability: "",
+    runtime: 0,
+    images: [{ coverType: "poster", url: getImage(tmdbSearchResult.poster_path ?? "")}],
+    path: "",
+    year: tmdbSearchResult.release_date ? new Date(tmdbSearchResult.release_date).getFullYear() : new Date(tmdbSearchResult?.first_air_date ?? "").getFullYear(),
     genres: [],
     isAvailable: false,
     hasFile: false,
