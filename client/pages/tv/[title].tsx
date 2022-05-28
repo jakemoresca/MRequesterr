@@ -11,6 +11,7 @@ import { getSettings } from '../api/settings';
 import { Card, CardBody, CardSubtitle, CardTitle, Container, Input, Label, Progress } from 'reactstrap';
 import { ISonarrSeries } from '../../models/sonarrSeries';
 import { IMedia } from '../../models/media';
+import { authState } from '../../states/auth';
 
 export interface ITVProps {
     settings: ISettings;
@@ -20,6 +21,14 @@ const TV: NextPage<ITVProps> = (props) => {
     const [media, setMediaState] = useRecoilState(mediaState);
     const router = useRouter();
     const { title } = router.query;
+
+    const [userState] = useRecoilState(authState);
+
+    useEffect(() => {
+        if (!userState?.AccessToken) {
+            router.push("/login");
+        }
+    }, []);
 
     useEffect(() => {
         fetchData(title as string, setMediaState, props.settings);
@@ -100,8 +109,7 @@ function findWithYear(media: IMedia, title: string): IMedia | undefined {
         if (media.title.trim() == newTitle.trim() && new Date(media.firstAired).getFullYear() == Number(year)) {
             return media;
         }
-        else if(media.title == title)
-        {
+        else if (media.title == title) {
             return media;
         }
     }

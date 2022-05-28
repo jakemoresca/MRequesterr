@@ -1,10 +1,13 @@
 import { useRouter } from "next/router";
 import { ChangeEventHandler, KeyboardEventHandler, useState } from "react";
 import { Input } from "reactstrap";
+import { useRecoilState } from "recoil";
+import { authState } from "../states/auth";
 
 const NavMenu = () => {
     const router = useRouter();
     const [searchText, setSearchText] = useState<string>("");
+    const [userState, setUserState] = useRecoilState(authState);
 
     const handleSearch: KeyboardEventHandler<HTMLInputElement> = (event) => {
         if (event.code === 'Enter') {
@@ -16,6 +19,11 @@ const NavMenu = () => {
         setSearchText(event.currentTarget.value);
     }
 
+    const handleLogout = () => {
+        setUserState({ AccessToken: "", ServerId: "" });
+        router.push("/login");
+    }
+
     return (<header className="navbar navbar-expand-lg navbar-dark sticky-top bg-primary flex-md-nowrap p-0 shadow mh-100">
         <a className="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">
             <svg className="bi me-2" width="30" height="24" style={{ 'fill': 'white' }}><use xlinkHref="#bootstrap"></use></svg>
@@ -25,7 +33,7 @@ const NavMenu = () => {
         {/* <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" /> */}
         <div className="navbar-nav">
             <div className="nav-item text-nowrap">
-                <a className="nav-link px-3" href="#">Sign out</a>
+                <a className="nav-link px-3" href="#" onClick={handleLogout}>Sign out</a>
             </div>
         </div>
     </header>)

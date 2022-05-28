@@ -1,5 +1,19 @@
-const Series = () => (
-    <div>
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { authState } from "../states/auth";
+
+const Series = () => {
+    const [userState] = useRecoilState(authState);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!userState?.AccessToken) {
+            router.push("/login");
+        }
+    }, []);
+
+    return (<div>
         <nav className="navbar bg-light ml-n1">
             <div className="container-fluid justify-content-start">
                 <div className="col-md-9">
@@ -64,7 +78,7 @@ const Series = () => (
 
             </div>
         </div>
-    </div>
-);
+    </div>);
+};
 
 export default Series;

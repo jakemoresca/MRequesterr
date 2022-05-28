@@ -10,6 +10,7 @@ import { ISettings } from '../../models/settings';
 import { getSettings } from '../api/settings';
 import { Container, Card, CardBody, CardTitle, Progress, Table } from 'reactstrap';
 import { RadarrQueueRecord } from '../../models/radarrMovies';
+import { authState } from '../../states/auth';
 
 export interface IMovieProps {
     settings: ISettings;
@@ -17,9 +18,15 @@ export interface IMovieProps {
 
 const Movie: NextPage<IMovieProps> = (props) => {
     const [media, setMediaState] = useRecoilState(mediaState);
-
     const router = useRouter();
     const { tmdbId } = router.query;
+    const [userState] = useRecoilState(authState);
+
+    useEffect(() => {
+        if (!userState?.AccessToken) {
+            router.push("/login");
+        }
+    }, []);
 
     const radarrQueueRecord = media?.additionalInfo as RadarrQueueRecord;
     const progressValue = (radarrQueueRecord?.sizeleft - radarrQueueRecord?.size) == 0 ? 0 :
@@ -91,7 +98,7 @@ async function fetchData(tmdbId: string, setMediaState: SetterOrUpdater<MediaSta
     if (radarrMovieMedia) {
         const radarrQueueRecord = radarrQueue.records.find(x => x.movieId.toString() == radarrMovieMedia.id);
 
-        setMediaState({ ...radarrMovieMedia, ...movieMedia,  isAvailable: true, hasFile: radarrMovieMedia.hasFile, additionalInfo: radarrQueueRecord });
+        setMediaState({ ...radarrMovieMedia, ...movieMedia, isAvailable: true, hasFile: radarrMovieMedia.hasFile, additionalInfo: radarrQueueRecord });
     }
     else {
         setMediaState(movieMedia);

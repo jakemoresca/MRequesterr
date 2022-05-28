@@ -13,6 +13,7 @@ import { IMedia } from '../../models/media';
 import { getSeries } from '../api/series';
 import { getMovies } from '../api/movies';
 import Link from 'next/link';
+import { authState } from '../../states/auth';
 
 export interface ITVProps {
     settings: ISettings;
@@ -25,6 +26,13 @@ const TV: NextPage<ITVProps> = (props) => {
     const { search } = router.query;
     const [searchResults, setSearchResult] = useRecoilState(searchResultState);
     const [searchText, setSearchText] = useState<string>(search as string);
+    const [userState] = useRecoilState(authState);
+
+    useEffect(() => {
+        if (!userState?.AccessToken) {
+            router.push("/login");
+        }
+    }, []);
 
     useEffect(() => {
         setSearchText(search as string);
@@ -44,22 +52,20 @@ const TV: NextPage<ITVProps> = (props) => {
     return (<Container fluid>
         <Input type="search" placeholder="Search" onKeyUp={handleSearch} onChange={handleChange} value={searchText} />
 
-        { searchResults?.map((searchResult, index) => {
+        {searchResults?.map((searchResult, index) => {
             const isMovie = searchResult.media_type == MediaType.Movie;
             const isSeries = searchResult.media_type == MediaType.Tv;
 
-            if(isSeries)
-            {
+            if (isSeries) {
                 const sonarrSeriesMedia = props.series.find(x => x.title == searchResult.name);
-                const media: IMedia = {...convertSearchResultToMedia(searchResult), isAvailable: !!sonarrSeriesMedia }
+                const media: IMedia = { ...convertSearchResultToMedia(searchResult), isAvailable: !!sonarrSeriesMedia }
                 const linkHref = `/tv/${searchResult.name}`;
 
                 return (<Link key={`link${index}`} href={linkHref}><a className='text-decoration-none'><MediaCard key={index} media={media} /></a></Link>)
             }
-            else if(isMovie)
-            {
+            else if (isMovie) {
                 const radarrMovieMedia = props.movies.find(x => x.tmdbId == searchResult.id.toString());
-                const media: IMedia = {...convertSearchResultToMedia(searchResult), isAvailable: radarrMovieMedia?.hasFile ?? false }
+                const media: IMedia = { ...convertSearchResultToMedia(searchResult), isAvailable: radarrMovieMedia?.hasFile ?? false }
                 const linkHref = `/movies/${searchResult.id ?? ""}`;
 
                 return (<Link key={`link${index}`} href={linkHref}><a className='text-decoration-none'><MediaCard key={index} media={media} /></a></Link>)
@@ -67,7 +73,7 @@ const TV: NextPage<ITVProps> = (props) => {
         })
         }
 
-        { searchResults?.length == 0 && 
+        {searchResults?.length == 0 &&
             <h5 className='align-center'>It&apos;s easy to add a new request, just start typing the name of the movie / series you want to add</h5>
         }
     </Container>);

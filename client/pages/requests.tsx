@@ -6,6 +6,10 @@ import { getItemTypeAndUrl, getMovies } from './api/movies'
 import { getSeries } from './api/series'
 import { getSettings } from './api/settings'
 import LazyCarousel from '../components/carousel'
+import { useRouter } from 'next/router'
+import { useRecoilState } from 'recoil'
+import { authState } from '../states/auth'
+import { useEffect } from 'react'
 
 export interface IRequestsProps {
   settings: ISettings;
@@ -14,6 +18,15 @@ export interface IRequestsProps {
 }
 
 const Requests: NextPage<IRequestsProps> = (props) => {
+  const [userState] = useRecoilState(authState);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!userState?.AccessToken) {
+      router.push("/login");
+    }
+  }, []);
+
   const movieSettings = props.settings.integrationSettings.movies;
   const seriesSettings = props.settings.integrationSettings.series;
 

@@ -6,11 +6,21 @@ import { convertToMedia, getPopularMovies, getPopularSeries } from './api/tmdb'
 import { SetterOrUpdater, useRecoilState } from 'recoil'
 import { IPopularMoviesState, IPopularSeriesState, popularMoviesState, popularSeriesState } from '../states/discover'
 import { useEffect } from 'react'
+import { authState } from '../states/auth'
+import { useRouter } from 'next/router'
 
 
 const Discover: NextPage = () => {
   const [moviesState, setMovieState] = useRecoilState(popularMoviesState);
   const [seriesState, setSeriesState] = useRecoilState(popularSeriesState);
+  const [userState] = useRecoilState(authState);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!userState?.AccessToken) {
+      router.push("/login");
+    }
+  }, []);
 
   useEffect(() => {
     fetchData(setMovieState, setSeriesState);

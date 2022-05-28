@@ -7,6 +7,10 @@ import { getMovies, getItemTypeAndUrl } from './api/movies'
 import { getSeries } from './api/series'
 import { getSettings } from './api/settings'
 import LazyCarousel from '../components/carousel'
+import { useRecoilState } from 'recoil'
+import { authState } from '../states/auth'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 export interface IHomeProps {
   settings: ISettings;
@@ -17,6 +21,14 @@ export interface IHomeProps {
 const Home: NextPage<IHomeProps> = (props) => {
   const movieSettings = props.settings.integrationSettings.movies;
   const seriesSettings = props.settings.integrationSettings.series;
+  const [userState] = useRecoilState(authState);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!userState?.AccessToken) {
+      router.push("/login");
+    }
+  }, []);
 
   var radarrPort = movieSettings.port;
   var radarrHost = movieSettings.host;
@@ -46,11 +58,11 @@ const Home: NextPage<IHomeProps> = (props) => {
       <Head>
         <title>Now Playing</title>
       </Head>
-        <div className="container-fluid">
-          <LazyCarousel items={props.movies} getItemTypeAndUrl={getRadarrItemTypeAndUrlAction} showProgress={true} title="Movies" />
-          <hr />
-          <LazyCarousel items={props.series} getItemTypeAndUrl={getSonarrItemTypeAndUrlAction} showProgress={true} title="Series" />
-        </div>
+      <div className="container-fluid">
+        <LazyCarousel items={props.movies} getItemTypeAndUrl={getRadarrItemTypeAndUrlAction} showProgress={true} title="Movies" />
+        <hr />
+        <LazyCarousel items={props.series} getItemTypeAndUrl={getSonarrItemTypeAndUrlAction} showProgress={true} title="Series" />
+      </div>
     </div>
   )
 }
