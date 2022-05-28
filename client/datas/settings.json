@@ -14,6 +14,13 @@
             "port": 443,
             "useSsl": true
         },
+        "auth": {
+            "baseUrl": "/jellyfin",
+            "apiKey": "",
+            "host": "rydersir.polaris.usbx.me",
+            "port": 443,
+            "useSsl": true
+        },
         "tmdbApiKey": ""
     }
 }

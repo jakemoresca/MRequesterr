@@ -7,6 +7,7 @@ export interface IIntegrationSettings
 {
     movies: IMovieSettings;
     series: ISeriesSettings;
+    auth: IAuthSettings;
 }
 
 export interface IMovieSettings
@@ -19,6 +20,15 @@ export interface IMovieSettings
 }
 
 export interface ISeriesSettings
+{
+    baseUrl: string;
+    apiKey: string;
+    host: string;
+    port?: number;
+    useSsl: boolean;
+}
+
+export interface IAuthSettings
 {
     baseUrl: string;
     apiKey: string;
