@@ -1,5 +1,5 @@
 import { MediaStateType } from "../states/movie";
-import { Button, Card as BootstrapCard, CardBody, CardImg, CardSubtitle, CardTitle } from 'reactstrap';
+import { Badge, Button, Card as BootstrapCard, CardBody, CardImg, CardSubtitle, CardTitle } from 'reactstrap';
 
 export interface IMediaCardProps {
     media: MediaStateType
@@ -29,6 +29,9 @@ const MediaCard = (props: IMediaCardProps) => {
                         <Button color="primary">
                             Request
                         </Button>
+                    }
+                    {media?.isAvailable &&
+                        <Badge color="success">Downloaded</Badge>
                     }
                 </CardBody>
             </div>

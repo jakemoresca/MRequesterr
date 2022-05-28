@@ -10,6 +10,7 @@ import { ISettings } from '../../models/settings';
 import { getSettings } from '../api/settings';
 import { Card, CardBody, CardSubtitle, CardTitle, Container, Input, Label, Progress } from 'reactstrap';
 import { ISonarrSeries } from '../../models/sonarrSeries';
+import { IMedia } from '../../models/media';
 
 export interface ITVProps {
     settings: ISettings;
@@ -22,11 +23,13 @@ const TV: NextPage<ITVProps> = (props) => {
 
     useEffect(() => {
         fetchData(title as string, setMediaState, props.settings);
-    }, [])
+    }, [title])
 
     const handleCheck = () => {
 
     }
+
+    const progress = Math.ceil(media?.statistics.percentOfEpisodes ?? 0);
 
     return (<Container fluid>
         <MediaCard media={media} />
@@ -61,8 +64,8 @@ const TV: NextPage<ITVProps> = (props) => {
                     <CardTitle tag="h5">
                         Request Progress
                     </CardTitle>
-                    <Progress className="col-md-9 bg-primary" value={media?.statistics.percentOfEpisodes} />
-                    {`${media?.statistics.percentOfEpisodes} / 100`}
+                    <Progress className="col-md-9 bg-dark" value={progress} />
+                    {`${progress} / 100`}
                 </CardBody>
             </Card>
         </Container>
@@ -75,7 +78,7 @@ async function fetchData(title: string, setMediaState: SetterOrUpdater<MediaStat
     const sonarrLookup = await getSeriesLookup(settings, title);
 
     const seriesMedia = convertToMedia(series);
-    const sonarrSeriesMedia = sonarrSeries.find(x => x.title == series.name);
+    const sonarrSeriesMedia = containsYear(title) ? sonarrSeries.find(x => findWithYear(x, title)) : sonarrSeries.find(x => x.title == series.name);
 
     if (sonarrSeriesMedia) {
         setMediaState({ ...seriesMedia, isAvailable: true, additionalInfo: sonarrLookup, statistics: sonarrSeriesMedia.statistics });
@@ -83,6 +86,36 @@ async function fetchData(title: string, setMediaState: SetterOrUpdater<MediaStat
     else {
         setMediaState({ ...seriesMedia, additionalInfo: sonarrLookup });
     }
+}
+
+function containsYear(title: string) {
+    var yearRegex = /(\(\d{4}\))/
+    return yearRegex.test(title);
+}
+
+function findWithYear(media: IMedia, title: string): IMedia | undefined {
+    var { newTitle, year } = extractYearAndTitle(title);
+
+    if (media.firstAired) {
+        if (media.title.trim() == newTitle.trim() && new Date(media.firstAired).getFullYear() == Number(year)) {
+            return media;
+        }
+        else if(media.title == title)
+        {
+            return media;
+        }
+    }
+}
+
+function extractYearAndTitle(title: string) {
+    const yearRegex = /(\(\d{4}\))/
+
+    const years = title.match(yearRegex);
+    const year = years != null ? years[0].replace("(", "").replace(")", "") : "0";
+
+    const newTitle = title.replace(yearRegex, "");
+
+    return { newTitle, year };
 }
 
 export async function getServerSideProps() {

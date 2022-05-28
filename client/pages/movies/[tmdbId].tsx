@@ -35,7 +35,7 @@ const Movie: NextPage<IMovieProps> = (props) => {
 
     useEffect(() => {
         fetchData(tmdbId as string, setMediaState, props.settings);
-    }, [])
+    }, [tmdbId])
 
     return (<Container fluid>
         <MediaCard media={media} />

@@ -9,9 +9,15 @@ import { getSettings } from '../api/settings';
 import { Container, Input } from 'reactstrap';
 import { searchResultState } from '../../states/search';
 import { ITmdbSearchResult, MediaType } from '../../models/tmdbSearch';
+import { IMedia } from '../../models/media';
+import { getSeries } from '../api/series';
+import { getMovies } from '../api/movies';
+import Link from 'next/link';
 
 export interface ITVProps {
     settings: ISettings;
+    series: IMedia[];
+    movies: IMedia[];
 }
 
 const TV: NextPage<ITVProps> = (props) => {
@@ -21,8 +27,9 @@ const TV: NextPage<ITVProps> = (props) => {
     const [searchText, setSearchText] = useState<string>(search as string);
 
     useEffect(() => {
-        fetchData(searchText, setSearchResult, props.settings);
-    }, [])
+        setSearchText(search as string);
+        fetchData(search as string, setSearchResult, props.settings);
+    }, [search])
 
     const handleSearch: KeyboardEventHandler<HTMLInputElement> = (event) => {
         if (event.code === 'Enter') {
@@ -38,12 +45,30 @@ const TV: NextPage<ITVProps> = (props) => {
         <Input type="search" placeholder="Search" onKeyUp={handleSearch} onChange={handleChange} value={searchText} />
 
         { searchResults?.map((searchResult, index) => {
-            return (<MediaCard key={index} media={convertSearchResultToMedia(searchResult)} />)
+            const isMovie = searchResult.media_type == MediaType.Movie;
+            const isSeries = searchResult.media_type == MediaType.Tv;
+
+            if(isSeries)
+            {
+                const sonarrSeriesMedia = props.series.find(x => x.title == searchResult.name);
+                const media: IMedia = {...convertSearchResultToMedia(searchResult), isAvailable: !!sonarrSeriesMedia }
+                const linkHref = `/tv/${searchResult.name}`;
+
+                return (<Link key={`link${index}`} href={linkHref}><a className='text-decoration-none'><MediaCard key={index} media={media} /></a></Link>)
+            }
+            else if(isMovie)
+            {
+                const radarrMovieMedia = props.movies.find(x => x.tmdbId == searchResult.id.toString());
+                const media: IMedia = {...convertSearchResultToMedia(searchResult), isAvailable: radarrMovieMedia?.hasFile ?? false }
+                const linkHref = `/movies/${searchResult.id ?? ""}`;
+
+                return (<Link key={`link${index}`} href={linkHref}><a className='text-decoration-none'><MediaCard key={index} media={media} /></a></Link>)
+            }
         })
         }
 
         { searchResults?.length == 0 && 
-            <h5 className='align-center'>It's easy to add a new request, just start typing the name of the movie / series you want to add</h5>
+            <h5 className='align-center'>It&apos;s easy to add a new request, just start typing the name of the movie / series you want to add</h5>
         }
     </Container>);
 }
@@ -63,8 +88,10 @@ async function fetchData(query: string, setSearchResult: SetterOrUpdater<ITmdbSe
 
 export async function getServerSideProps() {
     const settings = await getSettings();
-    return { props: { settings } }
-}
+    const series = await getSeries();
+    const movies = await getMovies();
 
+    return { props: { settings, series, movies } }
+}
 
 export default TV;

@@ -14,7 +14,7 @@ const Discover: NextPage = () => {
 
   useEffect(() => {
     fetchData(setMovieState, setSeriesState);
-  }, [])
+  })
 
   const getItemTypeAndUrlSeries = (media: IMedia) => {
     const url = media.images[0].url;

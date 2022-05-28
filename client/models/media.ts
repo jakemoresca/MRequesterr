@@ -26,6 +26,7 @@ export interface IMedia
     statistics: IStatistics;
     additionalInfo?: AdditionalMediaInfo;
     movieFile?: MovieFile;
+    firstAired?: string;
 }
 
 export type AdditionalMediaInfo = ISonarrSeries | RadarrQueueRecord | undefined;
