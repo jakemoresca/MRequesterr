@@ -1,11 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiResponse } from 'next'
 import { IAuthSettings, ISettings } from '../../models/settings'
 import { IAuthState } from '../../states/auth';
 import { getSettings } from './settings';
 
 export default async function handler(
-    req: NextApiRequest,
     res: NextApiResponse<ISettings>
 ) {
     const movies = await getSettings();
@@ -33,11 +32,8 @@ export async function login(username?: string, password?: string, overrideSettin
     if (loginResult.ok) {
         return loginResult.json();
     }
-    else if (loginResult.status == 401 || loginResult.status == 415) {
-        return loginResult.json();
-    }
 
-    return loginResult.json();
+    return { AccessToken: "", ServerId: "" };
 }
 
 

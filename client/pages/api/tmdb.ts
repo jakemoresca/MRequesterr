@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiResponse } from 'next'
 import { IMedia } from '../../models/media';
 import { ITmdbMovie, ITmdbMovieResult } from '../../models/tmdbMovie';
 import { ITmdbSearch, ITmdbSearchResult } from '../../models/tmdbSearch';
@@ -7,7 +7,6 @@ import { ITmdbSearch, ITmdbSearchResult } from '../../models/tmdbSearch';
 const apiKey = "31140dcf74785b0d8b68a678b8057587";
 
 export default async function handler(
-    req: NextApiRequest,
     res: NextApiResponse<ITmdbMovie>
 ) {
     const popularMovies = await getPopularMovies(1);

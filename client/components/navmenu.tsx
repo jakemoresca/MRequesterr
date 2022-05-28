@@ -7,7 +7,7 @@ import { authState } from "../states/auth";
 const NavMenu = () => {
     const router = useRouter();
     const [searchText, setSearchText] = useState<string>("");
-    const [userState, setUserState] = useRecoilState(authState);
+    const [, setUserState] = useRecoilState(authState);
 
     const handleSearch: KeyboardEventHandler<HTMLInputElement> = (event) => {
         if (event.code === 'Enter') {
@@ -30,7 +30,6 @@ const NavMenu = () => {
             <span className="fs-5 fw-semibold">MRequesterr</span>
         </a>
         <Input type="search" placeholder="Search" onKeyUp={handleSearch} onChange={handleChange} value={searchText} />
-        {/* <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" /> */}
         <div className="navbar-nav">
             <div className="nav-item text-nowrap">
                 <a className="nav-link px-3" href="#" onClick={handleLogout}>Sign out</a>

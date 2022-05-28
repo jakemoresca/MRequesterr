@@ -1,12 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiResponse } from 'next'
 import { IMedia } from '../../models/media';
 import { IRadarrQueue } from '../../models/radarrMovies';
 import { IMovieSettings, ISettings } from '../../models/settings'
 import { getSettings } from './settings';
 
 export default async function handler(
-    req: NextApiRequest,
     res: NextApiResponse<IMedia[]>
 ) {
     const movies = await getMovies();
