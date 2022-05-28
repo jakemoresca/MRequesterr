@@ -10,7 +10,7 @@ import { ISettings } from '../../models/settings';
 import { getSettings } from '../api/settings';
 import { Container, Card, CardBody, CardTitle, Progress, Table } from 'reactstrap';
 import { RadarrQueueRecord } from '../../models/radarrMovies';
-import { authState } from '../../states/auth';
+import Authenticate from '../../components/authenticate';
 
 export interface IMovieProps {
     settings: ISettings;
@@ -20,13 +20,6 @@ const Movie: NextPage<IMovieProps> = (props) => {
     const [media, setMediaState] = useRecoilState(mediaState);
     const router = useRouter();
     const { tmdbId } = router.query;
-    const [userState] = useRecoilState(authState);
-
-    useEffect(() => {
-        if (!userState?.AccessToken) {
-            router.push("/login");
-        }
-    }, []);
 
     const radarrQueueRecord = media?.additionalInfo as RadarrQueueRecord;
     const progressValue = (radarrQueueRecord?.sizeleft - radarrQueueRecord?.size) == 0 ? 0 :
@@ -45,6 +38,7 @@ const Movie: NextPage<IMovieProps> = (props) => {
     }, [tmdbId])
 
     return (<Container fluid>
+        <Authenticate />
         <MediaCard media={media} />
         <br />
         <Container fluid className='d-flex flex-row'>

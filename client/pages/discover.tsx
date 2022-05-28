@@ -6,21 +6,11 @@ import { convertToMedia, getPopularMovies, getPopularSeries } from './api/tmdb'
 import { SetterOrUpdater, useRecoilState } from 'recoil'
 import { IPopularMoviesState, IPopularSeriesState, popularMoviesState, popularSeriesState } from '../states/discover'
 import { useEffect } from 'react'
-import { authState } from '../states/auth'
-import { useRouter } from 'next/router'
-
+import Authenticate from '../components/authenticate'
 
 const Discover: NextPage = () => {
   const [moviesState, setMovieState] = useRecoilState(popularMoviesState);
   const [seriesState, setSeriesState] = useRecoilState(popularSeriesState);
-  const [userState] = useRecoilState(authState);
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!userState?.AccessToken) {
-      router.push("/login");
-    }
-  }, []);
 
   useEffect(() => {
     fetchData(setMovieState, setSeriesState);
@@ -47,30 +37,28 @@ const Discover: NextPage = () => {
   const handleNextMovie = async (page: number) => {
     const needLoad = (loadedPage - (page * itemsDisplayedPerPage) - itemsDisplayedPerPage) < 0
 
-    if(needLoad)
-    {
+    if (needLoad) {
       const nextPage = moviesState.currentPage + 1;
       const popularMovies = await getPopularMovies(nextPage);
       const movies = popularMovies.results.map(convertToMedia);
 
       const newMovies = moviesState.movies.concat(movies);
 
-      setMovieState({ movies: newMovies, currentPage: nextPage});
+      setMovieState({ movies: newMovies, currentPage: nextPage });
     }
   }
 
   const handleNextSeries = async (page: number) => {
     const needLoad = (loadedPage - (page * itemsDisplayedPerPage) - itemsDisplayedPerPage) < 0
 
-    if(needLoad)
-    {
+    if (needLoad) {
       const nextPage = seriesState.currentPage + 1;
       const popularMovies = await getPopularSeries(nextPage);
       const series = popularMovies.results.map(convertToMedia);
 
       const newSeries = seriesState.series.concat(series);
 
-      setSeriesState({ series: newSeries, currentPage: nextPage});
+      setSeriesState({ series: newSeries, currentPage: nextPage });
     }
   }
 
@@ -79,11 +67,12 @@ const Discover: NextPage = () => {
       <Head>
         <title>Discover</title>
       </Head>
-        <div className="container-fluid">
-          <LazyCarousel items={moviesState.movies} handleNext={handleNextMovie} getItemTypeAndUrl={getItemTypeAndUrlMovie} title="Movies" />
-          <hr />
-          <LazyCarousel items={seriesState.series} handleNext={handleNextSeries} getItemTypeAndUrl={getItemTypeAndUrlSeries} title="Series" />
-        </div>
+      <div className="container-fluid">
+        <Authenticate />
+        <LazyCarousel items={moviesState.movies} handleNext={handleNextMovie} getItemTypeAndUrl={getItemTypeAndUrlMovie} title="Movies" />
+        <hr />
+        <LazyCarousel items={seriesState.series} handleNext={handleNextSeries} getItemTypeAndUrl={getItemTypeAndUrlSeries} title="Series" />
+      </div>
     </div>
   )
 }

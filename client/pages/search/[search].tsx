@@ -13,7 +13,7 @@ import { IMedia } from '../../models/media';
 import { getSeries } from '../api/series';
 import { getMovies } from '../api/movies';
 import Link from 'next/link';
-import { authState } from '../../states/auth';
+import Authenticate from '../../components/authenticate';
 
 export interface ITVProps {
     settings: ISettings;
@@ -26,13 +26,6 @@ const TV: NextPage<ITVProps> = (props) => {
     const { search } = router.query;
     const [searchResults, setSearchResult] = useRecoilState(searchResultState);
     const [searchText, setSearchText] = useState<string>(search as string);
-    const [userState] = useRecoilState(authState);
-
-    useEffect(() => {
-        if (!userState?.AccessToken) {
-            router.push("/login");
-        }
-    }, []);
 
     useEffect(() => {
         setSearchText(search as string);
@@ -50,6 +43,7 @@ const TV: NextPage<ITVProps> = (props) => {
     }
 
     return (<Container fluid>
+            <Authenticate />
         <Input type="search" placeholder="Search" onKeyUp={handleSearch} onChange={handleChange} value={searchText} />
 
         {searchResults?.map((searchResult, index) => {

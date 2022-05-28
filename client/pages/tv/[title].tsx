@@ -11,7 +11,7 @@ import { getSettings } from '../api/settings';
 import { Card, CardBody, CardSubtitle, CardTitle, Container, Input, Label, Progress } from 'reactstrap';
 import { ISonarrSeries } from '../../models/sonarrSeries';
 import { IMedia } from '../../models/media';
-import { authState } from '../../states/auth';
+import Authenticate from '../../components/authenticate';
 
 export interface ITVProps {
     settings: ISettings;
@@ -21,14 +21,6 @@ const TV: NextPage<ITVProps> = (props) => {
     const [media, setMediaState] = useRecoilState(mediaState);
     const router = useRouter();
     const { title } = router.query;
-
-    const [userState] = useRecoilState(authState);
-
-    useEffect(() => {
-        if (!userState?.AccessToken) {
-            router.push("/login");
-        }
-    }, []);
 
     useEffect(() => {
         fetchData(title as string, setMediaState, props.settings);
@@ -41,6 +33,7 @@ const TV: NextPage<ITVProps> = (props) => {
     const progress = Math.ceil(media?.statistics.percentOfEpisodes ?? 0);
 
     return (<Container fluid>
+        <Authenticate />
         <MediaCard media={media} />
         <br />
         <Container fluid className='d-flex flex-row'>
