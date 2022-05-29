@@ -42,7 +42,7 @@ const Login = (props: ILoginProps) => {
             <title>Login</title>
         </Head>
         <svg className="bi me-2" width="30" height="24" style={{ 'fill': 'white' }}><use xlinkHref="#bootstrap"></use></svg>
-        <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
+        <h1 className="h3 mb-3 fw-normal">Please sign in using your Jellyfin account</h1>
 
         <div className="form-floating">
             <input type="text" className="form-control" id="floatingInput" placeholder="Username" value={loginState?.username} onChange={handleLoginChange} />
@@ -53,11 +53,7 @@ const Login = (props: ILoginProps) => {
             <label htmlFor="floatingPassword">Password</label>
         </div>
 
-        <div className="checkbox mb-3">
-            <label>
-                <input type="checkbox" value="remember-me" /> Remember me
-            </label>
-        </div>
+
         <button className="w-100 btn btn-lg btn-primary" type="button" onClick={handleLogin}>Sign in</button>
         <p className="mt-5 mb-3 text-muted">© 2022</p>
     </Form>);
@@ -81,6 +77,8 @@ export async function loginToJellyfin(loginState: LoginState, settings: ISetting
 
     if (result.AccessToken) {
         setAuthState(result);
+        localStorage.setItem("authStateToken", result.AccessToken);
+
         router.push("/");
     }
 }

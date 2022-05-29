@@ -68,10 +68,11 @@ const Discover: NextPage = () => {
         <title>Discover</title>
       </Head>
       <div className="container-fluid">
-        <Authenticate />
-        <LazyCarousel items={moviesState.movies} handleNext={handleNextMovie} getItemTypeAndUrl={getItemTypeAndUrlMovie} title="Movies" />
-        <hr />
-        <LazyCarousel items={seriesState.series} handleNext={handleNextSeries} getItemTypeAndUrl={getItemTypeAndUrlSeries} title="Series" />
+        <Authenticate>
+          <LazyCarousel items={moviesState.movies} handleNext={handleNextMovie} getItemTypeAndUrl={getItemTypeAndUrlMovie} title="Movies" />
+          <hr />
+          <LazyCarousel items={seriesState.series} handleNext={handleNextSeries} getItemTypeAndUrl={getItemTypeAndUrlSeries} title="Series" />
+        </Authenticate>
       </div>
     </div>
   )

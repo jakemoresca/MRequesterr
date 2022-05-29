@@ -46,12 +46,13 @@ const Home: NextPage<IHomeProps> = (props) => {
       <Head>
         <title>Now Playing</title>
       </Head>
-      <div className="container-fluid">
-        <Authenticate />
-        <LazyCarousel items={props.movies} getItemTypeAndUrl={getRadarrItemTypeAndUrlAction} showProgress={true} title="Movies" />
-        <hr />
-        <LazyCarousel items={props.series} getItemTypeAndUrl={getSonarrItemTypeAndUrlAction} showProgress={true} title="Series" />
-      </div>
+      <Authenticate>
+        <div className="container-fluid">
+          <LazyCarousel items={props.movies} getItemTypeAndUrl={getRadarrItemTypeAndUrlAction} title="Movies" />
+          <hr />
+          <LazyCarousel items={props.series} getItemTypeAndUrl={getSonarrItemTypeAndUrlAction} title="Series" />
+        </div>
+      </Authenticate>
     </div>
   )
 }

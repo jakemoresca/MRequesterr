@@ -1,5 +1,6 @@
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Link from "next/link";
 import { NextPage } from "next/types";
 import React from "react";
 import { Button, Container } from "reactstrap";
@@ -23,7 +24,7 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
 
     const [state, setState] = React.useState<ICarouselState>({ currentPage: 0 });
 
-    const itemsPerPage = 6;
+    const itemsPerPage = 24;
     const maxPage = Math.ceil(props.items.length > 0 ? props.items.length / itemsPerPage : 0);
 
     const currentItems = props.items.filter((item, index) => {
@@ -55,7 +56,13 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
 
     const cards = currentItems.map((x, index) => {
         const { url, itemType } = props.getItemTypeAndUrl(x);
-        return (<Card key={index} {...x} imageUrl={url} itemType={itemType} showProgress={props.showProgress} />);
+        const isMovie = itemType == "movie";
+        const linkHref = isMovie ? `/movies/${x.tmdbId ?? ""}` : `/tv/${x.title}`;
+
+        return (<Link key={`card_${index}`} href={linkHref} passHref>
+            <a className="col-6 col-lg-1">
+        <Card key={index} {...x} imageUrl={url} itemType={itemType} showProgress={props.showProgress} />
+        </a></Link>);
     });
 
     if (cards.length == 0)
@@ -72,7 +79,7 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
             </Button>
         </Container>
         <div className="carousel-inner">
-            <div className="carousel-item active d-flex row row-cols-sm-2 row-cols-md-6">
+            <div className="carousel-item active d-flex row row-cols-sm-2 row-cols-md-6 row-cols-lg-12">
                 {cards}
             </div>
         </div>

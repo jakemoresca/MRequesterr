@@ -12,6 +12,7 @@ import { Card, CardBody, CardSubtitle, CardTitle, Container, Input, Label, Progr
 import { ISonarrSeries } from '../../models/sonarrSeries';
 import { IMedia } from '../../models/media';
 import Authenticate from '../../components/authenticate';
+import Head from 'next/head';
 
 export interface ITVProps {
     settings: ISettings;
@@ -33,44 +34,46 @@ const TV: NextPage<ITVProps> = (props) => {
     const progress = Math.ceil(media?.statistics.percentOfEpisodes ?? 0);
 
     return (<Container fluid>
-        <Authenticate />
-        <MediaCard media={media} />
-        <br />
-        <Container fluid className='d-flex flex-row'>
-            <Card color="secondary col-md-4 col-sm-6 mx-1">
-                <CardBody>
-                    <CardTitle tag="h5">
-                        Season Information
-                    </CardTitle>
-                    <CardSubtitle>
-                        Please select the season to monitor and download:
-                    </CardSubtitle>
-                    {
-                        media?.additionalInfo && (media.additionalInfo as ISonarrSeries).seasons.map((season, x) => {
-                            return (
-                                <div key={x}>
-                                    <Input type="checkbox" checked={season.monitored} onChange={handleCheck} />
-                                    <Label check>
-                                        {
-                                            season.seasonNumber == 0 ? ' Specials' : ` Season ${season.seasonNumber}`
-                                        }
-                                    </Label>
-                                </div>
-                            );
-                        })
-                    }
-                </CardBody>
-            </Card>
-            <Card color="secondary col-md-4 col-sm-6 mx-1">
-                <CardBody>
-                    <CardTitle tag="h5">
-                        Request Progress
-                    </CardTitle>
-                    <Progress className="col-md-9 bg-dark" value={progress} />
-                    {`${progress} / 100`}
-                </CardBody>
-            </Card>
-        </Container>
+        <Head><title>View TV</title></Head>
+        <Authenticate>
+            <MediaCard media={media} />
+            <br />
+            <Container fluid className='d-flex flex-row'>
+                <Card color="secondary col-md-4 col-sm-6 mx-1">
+                    <CardBody>
+                        <CardTitle tag="h5">
+                            Season Information
+                        </CardTitle>
+                        <CardSubtitle>
+                            Please select the season to monitor and download:
+                        </CardSubtitle>
+                        {
+                            media?.additionalInfo && (media.additionalInfo as ISonarrSeries).seasons.map((season, x) => {
+                                return (
+                                    <div key={x}>
+                                        <Input type="checkbox" checked={season.monitored} onChange={handleCheck} />
+                                        <Label check>
+                                            {
+                                                season.seasonNumber == 0 ? ' Specials' : ` Season ${season.seasonNumber}`
+                                            }
+                                        </Label>
+                                    </div>
+                                );
+                            })
+                        }
+                    </CardBody>
+                </Card>
+                <Card color="secondary col-md-4 col-sm-6 mx-1">
+                    <CardBody>
+                        <CardTitle tag="h5">
+                            Request Progress
+                        </CardTitle>
+                        <Progress className="col-md-9 bg-dark" value={progress} />
+                        {`${progress} / 100`}
+                    </CardBody>
+                </Card>
+            </Container>
+        </Authenticate>
     </Container>);
 }
 

@@ -9,9 +9,9 @@ const Layout = (props: { children?: React.ReactNode }) => (
         <Icons />
         <Container fluid={true} className="d-flex flex-column min-vh-100 vh-100 p-0">
             <NavMenu />
-            <Container fluid={true} className="d-flex flex-row flex-fill p-0">
-                <Sidebar />
-                <Container fluid={true} className="bg-light">
+            <Container fluid={true} className="d-flex flex-row flex-fill p-0 mt-5">
+                {/* <Sidebar /> */}
+                <Container fluid={true} className="bg-light pt-5">
                     {props.children}
                 </Container>
             </Container>

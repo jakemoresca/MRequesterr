@@ -11,6 +11,7 @@ import { getSettings } from '../api/settings';
 import { Container, Card, CardBody, CardTitle, Progress, Table } from 'reactstrap';
 import { RadarrQueueRecord } from '../../models/radarrMovies';
 import Authenticate from '../../components/authenticate';
+import Head from 'next/head';
 
 export interface IMovieProps {
     settings: ISettings;
@@ -37,47 +38,51 @@ const Movie: NextPage<IMovieProps> = (props) => {
         fetchData(tmdbId as string, setMediaState, props.settings);
     }, [tmdbId])
 
-    return (<Container fluid>
-        <Authenticate />
-        <MediaCard media={media} />
-        <br />
-        <Container fluid className='d-flex flex-row'>
-            {media?.isAvailable && !media.hasFile &&
-                <Card color="secondary col-md-4 col-sm-6 mx-1">
-                    <CardBody>
-                        <CardTitle tag="h5">
-                            Request Progress
-                        </CardTitle>
-                        {progress}
-                    </CardBody>
-                </Card>
-            }
-            {media?.hasFile &&
-                <Card color="secondary col-md-4 col-sm-6 mx-1">
-                    <CardBody>
-                        <CardTitle tag="h5">
-                            Downloaded Movie Information
-                        </CardTitle>
-                        <Table responsive>
-                            <thead>
-                                <tr>
-                                    <th>Video Codec</th>
-                                    <th>Audio</th>
-                                    <th>Quality</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{media.movieFile?.mediaInfo.videoCodec}</td>
-                                    <td>{media.movieFile?.mediaInfo.audioCodec}</td>
-                                    <td>{media.movieFile?.quality.quality.name}</td>
-                                </tr>
-                            </tbody>
-                        </Table>
-                    </CardBody>
-                </Card>
-            }
-        </Container>
+    return (<Container fluid className="py-3">
+        <Head>
+            <title>View Movie</title>
+        </Head>
+        <Authenticate>
+            <MediaCard media={media} />
+            <br />
+            <Container fluid className='d-flex flex-row'>
+                {media?.isAvailable && !media.hasFile &&
+                    <Card color="secondary col-md-4 col-sm-6 mx-1">
+                        <CardBody>
+                            <CardTitle tag="h5">
+                                Request Progress
+                            </CardTitle>
+                            {progress}
+                        </CardBody>
+                    </Card>
+                }
+                {media?.hasFile &&
+                    <Card color="secondary col-md-4 col-sm-6 mx-1">
+                        <CardBody>
+                            <CardTitle tag="h5">
+                                Downloaded Movie Information
+                            </CardTitle>
+                            <Table responsive>
+                                <thead>
+                                    <tr>
+                                        <th>Video Codec</th>
+                                        <th>Audio</th>
+                                        <th>Quality</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{media.movieFile?.mediaInfo.videoCodec}</td>
+                                        <td>{media.movieFile?.mediaInfo.audioCodec}</td>
+                                        <td>{media.movieFile?.quality.quality.name}</td>
+                                    </tr>
+                                </tbody>
+                            </Table>
+                        </CardBody>
+                    </Card>
+                }
+            </Container>
+        </Authenticate>
     </Container>);
 }
 

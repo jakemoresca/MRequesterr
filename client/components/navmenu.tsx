@@ -1,6 +1,7 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChangeEventHandler, KeyboardEventHandler, useState } from "react";
-import { Input } from "reactstrap";
+import { Collapse, Input, Nav, Navbar, NavbarBrand, NavbarText, NavbarToggler, NavItem, NavLink } from "reactstrap";
 import { useRecoilState } from "recoil";
 import { authState } from "../states/auth";
 
@@ -24,18 +25,42 @@ const NavMenu = () => {
         router.push("/login");
     }
 
-    return (<header className="navbar navbar-expand-lg navbar-dark sticky-top bg-primary flex-md-nowrap p-0 shadow mh-100">
-        <a className="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">
-            <svg className="bi me-2" width="30" height="24" style={{ 'fill': 'white' }}><use xlinkHref="#bootstrap"></use></svg>
-            <span className="fs-5 fw-semibold">MRequesterr</span>
-        </a>
-        <Input type="search" placeholder="Search" onKeyUp={handleSearch} onChange={handleChange} value={searchText} />
-        <div className="navbar-nav">
-            <div className="nav-item text-nowrap">
-                <a className="nav-link px-3" href="#" onClick={handleLogout}>Sign out</a>
-            </div>
-        </div>
-    </header>)
+    return (
+        <Navbar color="primary" dark expand="md" fixed="top">
+            <NavbarBrand href="/">
+                MRequesterr
+            </NavbarBrand>
+            <NavbarToggler onClick={function noRefCheck() { }} />
+            <Collapse navbar>
+                <Nav navbar>
+                    <NavItem>
+                        <Link href="/" passHref>
+                            <NavLink>
+                                Now Playing
+                            </NavLink>
+                        </Link>
+                    </NavItem>
+                    <NavItem>
+                        <Link passHref href="/discover">
+                            <NavLink>Discover</NavLink>
+                        </Link>
+                    </NavItem>
+                    <NavItem>
+                        <Link passHref href="/requests">
+                            <NavLink>Requests</NavLink>
+                        </Link>
+                    </NavItem>
+                </Nav>
+                <div className="col-md-4 col-lg-3 align-self-center">
+                    <Input type="search" placeholder="Search" onKeyUp={handleSearch} onChange={handleChange} value={searchText} />
+                </div>
+                <div className="navbar-nav position-absolute end-0">
+                    <div className="nav-item text-nowrap">
+                        <a className="nav-link px-3" href="#" onClick={handleLogout}>Sign out</a>
+                    </div>
+                </div>
+            </Collapse>
+        </Navbar>)
 };
 
 export default NavMenu;

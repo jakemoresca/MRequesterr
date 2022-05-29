@@ -30,7 +30,7 @@ const MediaCard = (props: IMediaCardProps) => {
                             Request
                         </Button>
                     }
-                    {media?.isAvailable &&
+                    {media?.hasFile &&
                         <Badge color="success">Downloaded</Badge>
                     }
                 </CardBody>
