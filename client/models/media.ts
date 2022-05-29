@@ -16,8 +16,8 @@ export interface IMedia
     minimumAvailability: string;
     //profileId: number;
     runtime: number;
-    images: IMediaImage[],
-    //titleSlug: string;
+    images: IMediaImage[];
+    titleSlug: string;
     path: string;
     year: number;
     genres: string[];

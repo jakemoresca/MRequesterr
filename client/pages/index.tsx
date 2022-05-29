@@ -8,6 +8,7 @@ import { getSeries } from './api/series'
 import { getSettings } from './api/settings'
 import LazyCarousel from '../components/carousel'
 import Authenticate from '../components/authenticate'
+
 export interface IHomeProps {
   settings: ISettings;
   movies: IMedia[];

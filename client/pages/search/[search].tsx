@@ -59,14 +59,14 @@ const TV: NextPage<ITVProps> = (props) => {
                     const media: IMedia = { ...convertSearchResultToMedia(searchResult), isAvailable: !!sonarrSeriesMedia }
                     const linkHref = `/tv/${searchResult.name}`;
 
-                    return (<Link key={`link${index}`} href={linkHref}><a className='text-decoration-none'><MediaCard key={index} media={media} /></a></Link>)
+                    return (<Link key={`link${index}`} href={linkHref}><a className='text-decoration-none'><MediaCard key={index} media={media} handleRequest={()=>{}} /></a></Link>)
                 }
                 else if (isMovie) {
                     const radarrMovieMedia = props.movies.find(x => x.tmdbId == searchResult.id.toString());
                     const media: IMedia = { ...convertSearchResultToMedia(searchResult), isAvailable: radarrMovieMedia?.hasFile ?? false }
                     const linkHref = `/movies/${searchResult.id ?? ""}`;
 
-                    return (<Link key={`link${index}`} href={linkHref}><a className='text-decoration-none'><MediaCard key={index} media={media} /></a></Link>)
+                    return (<Link key={`link${index}`} href={linkHref}><a className='text-decoration-none'><MediaCard key={index} media={media} handleRequest={()=>{}} /></a></Link>)
                 }
             })
             }

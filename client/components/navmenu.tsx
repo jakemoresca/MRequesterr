@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChangeEventHandler, KeyboardEventHandler, useState } from "react";
-import { Collapse, Input, Nav, Navbar, NavbarBrand, NavbarText, NavbarToggler, NavItem, NavLink } from "reactstrap";
+import { Collapse, DropdownItem, DropdownMenu, DropdownToggle, Input, Nav, Navbar, NavbarBrand, NavbarText, NavbarToggler, NavItem, NavLink, UncontrolledDropdown } from "reactstrap";
 import { useRecoilState } from "recoil";
 import { authState } from "../states/auth";
 
@@ -50,6 +50,23 @@ const NavMenu = () => {
                             <NavLink>Requests</NavLink>
                         </Link>
                     </NavItem>
+                    <UncontrolledDropdown inNavbar nav>
+                        <DropdownToggle caret nav>
+                            Release Calendar
+                        </DropdownToggle>
+                        <DropdownMenu right>
+                            <Link passHref href="/calendar/movie">
+                                <DropdownItem >
+                                    Movies
+                                </DropdownItem>
+                            </Link>
+                            <Link passHref href="/calendar/tv">
+                                <DropdownItem>
+                                    Series
+                                </DropdownItem>
+                            </Link>
+                        </DropdownMenu>
+                    </UncontrolledDropdown>
                 </Nav>
                 <div className="col-md-4 col-lg-3 align-self-center">
                     <Input type="search" placeholder="Search" onKeyUp={handleSearch} onChange={handleChange} value={searchText} />

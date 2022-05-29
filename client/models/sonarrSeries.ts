@@ -1,9 +1,10 @@
 export interface ISonarrSeries {
-    addOptions:       null;
+    addOptions:       any;
     title:            string;
     seasons:          Season[];
     rootFolderPath:   string;
     qualityProfileId: number;
+    languageProfileId: number;
     seasonFolder:     boolean;
     monitored:        boolean;
     tvdbid:           number;
@@ -12,6 +13,7 @@ export interface ISonarrSeries {
     imdbid:           null;
     titleSlug:        string;
     id:               number;
+    apikey:           string;
 }
 
 export interface Season {

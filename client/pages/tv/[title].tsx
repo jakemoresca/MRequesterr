@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router'
 import { NextPage } from 'next/types';
-import { useEffect } from 'react';
+import { ChangeEvent, ChangeEventHandler, useEffect } from 'react';
 import { SetterOrUpdater, useRecoilState } from 'recoil';
 import MediaCard from '../../components/mediacard';
-import { mediaState, MediaStateType } from '../../states/movie';
+import { mediaState, MediaStateType, seriesRequestState } from '../../states/media';
 import { convertToMedia, getSeries } from '../api/tmdb';
-import { getSeries as getSonarrSeries, getSeriesLookup } from '../api/series';
+import { getSeries as getSonarrSeries, getSeriesLookup, requestSeries } from '../api/series';
 import { ISettings } from '../../models/settings';
 import { getSettings } from '../api/settings';
 import { Card, CardBody, CardSubtitle, CardTitle, Container, Input, Label, Progress } from 'reactstrap';
@@ -20,15 +20,35 @@ export interface ITVProps {
 
 const TV: NextPage<ITVProps> = (props) => {
     const [media, setMediaState] = useRecoilState(mediaState);
+    const [seriesRequest, setSeriesRequestState] = useRecoilState(seriesRequestState);
+
     const router = useRouter();
     const { title } = router.query;
 
     useEffect(() => {
-        fetchData(title as string, setMediaState, props.settings);
+        fetchData(title as string, setMediaState, setSeriesRequestState, props.settings);
     }, [title])
 
-    const handleCheck = () => {
+    const handleCheck = (event: ChangeEvent<HTMLInputElement>, seasonNumber: number) => {
+        const newSeasonState = seriesRequest.seasons.map(season => {
+            if (season.seasonNumber == seasonNumber) {
+                return { ...season, monitored: event.currentTarget.checked }
+            }
 
+            return season;
+        });
+
+        const newSeriesState: ISonarrSeries = {
+            ...seriesRequest,
+            seasons: newSeasonState
+        };
+
+        setSeriesRequestState(newSeriesState);
+    }
+
+    const handleRequest = async () => {
+        const seriesResult = await requestSeries(seriesRequest, props.settings);
+        setSeriesRequestState(seriesResult);
     }
 
     const progress = Math.ceil(media?.statistics.percentOfEpisodes ?? 0);
@@ -36,7 +56,7 @@ const TV: NextPage<ITVProps> = (props) => {
     return (<Container fluid>
         <Head><title>View TV</title></Head>
         <Authenticate>
-            <MediaCard media={media} />
+            <MediaCard media={media} handleRequest={handleRequest} />
             <br />
             <Container fluid className='d-flex flex-row'>
                 <Card color="secondary col-md-4 col-sm-6 mx-1">
@@ -48,14 +68,12 @@ const TV: NextPage<ITVProps> = (props) => {
                             Please select the season to monitor and download:
                         </CardSubtitle>
                         {
-                            media?.additionalInfo && (media.additionalInfo as ISonarrSeries).seasons.map((season, x) => {
+                            seriesRequest && seriesRequest.seasons.map((season, x) => {
                                 return (
                                     <div key={x}>
-                                        <Input type="checkbox" checked={season.monitored} onChange={handleCheck} />
+                                        <Input type="checkbox" checked={season.monitored} onChange={(event) => handleCheck(event, season.seasonNumber)} />
                                         <Label check>
-                                            {
-                                                season.seasonNumber == 0 ? ' Specials' : ` Season ${season.seasonNumber}`
-                                            }
+                                            {season.seasonNumber == 0 ? ' Specials' : ` Season ${season.seasonNumber}`}
                                         </Label>
                                     </div>
                                 );
@@ -77,7 +95,7 @@ const TV: NextPage<ITVProps> = (props) => {
     </Container>);
 }
 
-async function fetchData(title: string, setMediaState: SetterOrUpdater<MediaStateType>, settings: ISettings) {
+async function fetchData(title: string, setMediaState: SetterOrUpdater<MediaStateType>, setSeriesRequestState: SetterOrUpdater<ISonarrSeries>, settings: ISettings) {
     const series = await getSeries(title);
     const sonarrSeries = await getSonarrSeries(settings);
     const sonarrLookup = await getSeriesLookup(settings, title);
@@ -91,6 +109,8 @@ async function fetchData(title: string, setMediaState: SetterOrUpdater<MediaStat
     else {
         setMediaState({ ...seriesMedia, additionalInfo: sonarrLookup });
     }
+
+    setSeriesRequestState(sonarrLookup);
 }
 
 function containsYear(title: string) {

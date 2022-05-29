@@ -12,10 +12,12 @@ export default async function handler(
     res.status(200).json(series)
 }
 
+const API_BASE_URL = "/api/v3";
+
 export async function getSeries(overrideSettings?: ISettings): Promise<IMedia[]> {
     const settings = overrideSettings ?? await getSettings();
 
-    const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, "/series");
+    const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/series`);
 
     const result = await fetch(getSeriesUrl);
 
@@ -26,9 +28,47 @@ export async function getSeries(overrideSettings?: ISettings): Promise<IMedia[]>
     return [];
 }
 
+export async function requestSeries(media: ISonarrSeries, overrideSettings?: ISettings): Promise<ISonarrSeries> {
+    const settings = overrideSettings ?? await getSettings();
+
+    const apikey = settings.integrationSettings.series.apiKey;
+    const rootFolderPath = (await getRootFolder(settings)).path;
+
+    const seriesRequestBody: ISonarrSeries = {
+        ...media,
+        seasonFolder: true,
+        rootFolderPath: "/home/rydersir/media/TV Shows",
+        qualityProfileId: 1,
+        languageProfileId: 1,
+        apikey,
+        addOptions: {
+            monitor: "all",
+            searchForCutoffUnmetEpisodes: false,
+            searchForMissingEpisodes: false
+        }
+    }
+
+    var requestSeriesUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/series`);
+
+    const result = await fetch(requestSeriesUrl, {
+        method: 'POST',
+        body: JSON.stringify(seriesRequestBody),
+        headers: {
+            'X-Api-Key': apikey,
+            'content-type': 'application/json'
+        }
+    });
+
+    if (result.ok) {
+        return result.json();
+    }
+
+    return media;
+}
+
 export async function getSeriesLookup(overrideSettings?: ISettings, title?: string): Promise<ISonarrSeries> {
     const settings = overrideSettings ?? await getSettings();
-    const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, `/series/lookup`, `&term=${title}`);
+    const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/series/lookup`, `&term=${title}`);
 
     const result = await fetch(getSeriesUrl);
 
@@ -44,7 +84,7 @@ export async function getSeriesLookup(overrideSettings?: ISettings, title?: stri
 export async function getRootFolder(overrideSettings?: ISettings): Promise<ISonarrRootFolder> {
     const settings = overrideSettings ?? await getSettings();
 
-    const getRootFolderUrl = getServiceUrl(settings.integrationSettings.series, "/rootfolder");
+    const getRootFolderUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/rootfolder`);
 
     const result = await fetch(getRootFolderUrl);
 
@@ -55,7 +95,7 @@ export async function getRootFolder(overrideSettings?: ISettings): Promise<ISona
     return { path: "", accessible: false };
 }
 
-const getServiceUrl = (seriesSettings: ISeriesSettings, relativeServiceUrl: string, queryString?: string) => {
+export const getServiceUrl = (seriesSettings: ISeriesSettings, relativeServiceUrl: string, queryString?: string) => {
     var apiKey = seriesSettings.apiKey;
     var port = seriesSettings.port;
     var host = seriesSettings.host;
@@ -63,7 +103,7 @@ const getServiceUrl = (seriesSettings: ISeriesSettings, relativeServiceUrl: stri
     var baseUrl = seriesSettings.baseUrl;
     var protocol = useSsl ? "https://" : "http://";
 
-    var serviceUrl = `${protocol}${host}:${port}${baseUrl}/api/v3${relativeServiceUrl}?apiKey=${apiKey}`;
+    var serviceUrl = `${protocol}${host}:${port}${baseUrl}${relativeServiceUrl}?apiKey=${apiKey}`;
 
     if (queryString) {
         serviceUrl = serviceUrl.concat(queryString);
