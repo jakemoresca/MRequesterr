@@ -3,7 +3,8 @@ import { Badge, Button, Card as BootstrapCard, CardBody, CardImg, CardSubtitle, 
 
 export interface IMediaCardProps {
     media: MediaStateType
-    handleRequest: () => void;
+    handleRequest?: () => void;
+    isDirty?: boolean;
 }
 
 const MediaCard = (props: IMediaCardProps) => {
@@ -26,7 +27,7 @@ const MediaCard = (props: IMediaCardProps) => {
                     <CardSubtitle className="mb-2 text-muted" tag="h6">
                         {media?.overview}
                     </CardSubtitle>
-                    {!media?.isAvailable &&
+                    {(!media?.isAvailable || props.isDirty) && props.handleRequest &&
                         <Button color="primary" onClick={props.handleRequest}>
                             Request
                         </Button>

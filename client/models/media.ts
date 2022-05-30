@@ -1,4 +1,4 @@
-import { RadarrQueueRecord } from "./radarrMovies";
+import { IRadarrMovie, RadarrQueueRecord } from "./radarrMovies";
 import { ISonarrSeries } from "./sonarrSeries";
 
 export interface IMedia 
@@ -29,7 +29,7 @@ export interface IMedia
     firstAired?: string;
 }
 
-export type AdditionalMediaInfo = ISonarrSeries | RadarrQueueRecord | undefined;
+export type AdditionalMediaInfo = ISonarrSeries | RadarrQueueRecord | IRadarrMovie | undefined;
 
 export interface IMediaImage 
 {

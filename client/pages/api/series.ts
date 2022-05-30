@@ -32,12 +32,12 @@ export async function requestSeries(media: ISonarrSeries, overrideSettings?: ISe
     const settings = overrideSettings ?? await getSettings();
 
     const apikey = settings.integrationSettings.series.apiKey;
-    const rootFolderPath = (await getRootFolder(settings)).path;
+    const rootFolderPath = (await getRootFolder(settings))[0];
 
     const seriesRequestBody: ISonarrSeries = {
         ...media,
         seasonFolder: true,
-        rootFolderPath: "/home/rydersir/media/TV Shows",
+        rootFolderPath: rootFolderPath.path,
         qualityProfileId: 1,
         languageProfileId: 1,
         apikey,
@@ -52,6 +52,40 @@ export async function requestSeries(media: ISonarrSeries, overrideSettings?: ISe
 
     const result = await fetch(requestSeriesUrl, {
         method: 'POST',
+        body: JSON.stringify(seriesRequestBody),
+        headers: {
+            'X-Api-Key': apikey,
+            'content-type': 'application/json'
+        }
+    });
+
+    if (result.ok) {
+        return result.json();
+    }
+
+    return media;
+}
+
+export async function updateRequestSeries(media: ISonarrSeries, overrideSettings?: ISettings): Promise<ISonarrSeries> {
+    const settings = overrideSettings ?? await getSettings();
+
+    const apikey = settings.integrationSettings.series.apiKey;
+
+    const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/series/${media.id}`);
+    const seriesResult = await fetch(getSeriesUrl);
+    const sonarrSeries = await seriesResult.json() as ISonarrSeries;
+
+    const seriesRequestBody: ISonarrSeries = {
+        ...sonarrSeries,
+        apikey,
+        seasons: media.seasons.map(season => {
+            var origSeason = sonarrSeries.seasons.find(x => x.seasonNumber == season.seasonNumber) ?? season;
+            return {...season, statistics: {...origSeason.statistics }}
+        })
+    }
+
+    const result = await fetch(getSeriesUrl, {
+        method: "PUT",
         body: JSON.stringify(seriesRequestBody),
         headers: {
             'X-Api-Key': apikey,
@@ -81,7 +115,7 @@ export async function getSeriesLookup(overrideSettings?: ISettings, title?: stri
     throw new Error("Error retrieving Series");
 }
 
-export async function getRootFolder(overrideSettings?: ISettings): Promise<ISonarrRootFolder> {
+export async function getRootFolder(overrideSettings?: ISettings): Promise<ISonarrRootFolder[]> {
     const settings = overrideSettings ?? await getSettings();
 
     const getRootFolderUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/rootfolder`);
@@ -89,10 +123,11 @@ export async function getRootFolder(overrideSettings?: ISettings): Promise<ISona
     const result = await fetch(getRootFolderUrl);
 
     if (result.ok) {
-        return result.json();
+        const results: Promise<ISonarrRootFolder[]> = result.json();
+        return results;
     }
 
-    return { path: "", accessible: false };
+    throw new Error("Error retrieving Series Folder");
 }
 
 export const getServiceUrl = (seriesSettings: ISeriesSettings, relativeServiceUrl: string, queryString?: string) => {

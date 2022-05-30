@@ -46,14 +46,14 @@ export async function requestMovie(media: IRadarrMovie, overrideSettings?: ISett
     const settings = overrideSettings ?? await getSettings();
 
     const apikey = settings.integrationSettings.movies.apiKey;
-    const rootFolderPath = (await getRootFolder(settings)).path;
+    const rootFolderPath = (await getRootFolder(settings))[0];
 
     const movieRequestBody: IRadarrMovie = {
         ...media,
         qualityProfileId: 1,
         apikey,
         monitored: true,
-        rootFolderPath: "/home/rydersir/media/Movies"
+        rootFolderPath: rootFolderPath.path
     }
 
     var requestMovieUrl = getServiceUrl(settings.integrationSettings.movies, `${API_BASE_URL}/movie`);
@@ -74,7 +74,7 @@ export async function requestMovie(media: IRadarrMovie, overrideSettings?: ISett
     return media;
 }
 
-export async function getRootFolder(overrideSettings?: ISettings): Promise<ISonarrRootFolder> {
+export async function getRootFolder(overrideSettings?: ISettings): Promise<ISonarrRootFolder[]> {
     const settings = overrideSettings ?? await getSettings();
 
     const getRootFolderUrl = getServiceUrl(settings.integrationSettings.movies, `${API_BASE_URL}/rootfolder`);
@@ -82,10 +82,11 @@ export async function getRootFolder(overrideSettings?: ISettings): Promise<ISona
     const result = await fetch(getRootFolderUrl);
 
     if (result.ok) {
-        return result.json();
+        const results: Promise<ISonarrRootFolder[]> = result.json();
+        return results;
     }
 
-    return { path: "", accessible: false };
+    throw new Error("Error retrieving Movies Folder");
 }
 
 export async function getQueue(overrideSettings?: ISettings): Promise<IRadarrQueue> {

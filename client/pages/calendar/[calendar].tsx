@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { NextPage } from 'next/types';
+import { GetStaticPaths, NextPage } from 'next/types';
 import { Container } from 'reactstrap';
 import Authenticate from '../../components/authenticate';
 import Head from 'next/head';
@@ -31,7 +31,15 @@ const Calendar: NextPage<ICalendarProps> = (props) => {
     </Container>);
 }
 
-export async function getServerSideProps() {
+export const getStaticPaths: GetStaticPaths<{ calendar: string }> = async () => {
+
+    return {
+        paths: ['/calendar/movie', '/calendar/tv'],
+        fallback: 'blocking' //indicates the type of fallback
+    }
+}
+
+export async function getStaticProps() {
     const settings = await getSettings();
 
     const sonarrCalendarUrl = getSonarrServiceUrl(settings.integrationSettings.series, "/feed/v3/calendar/Sonarr.ics");

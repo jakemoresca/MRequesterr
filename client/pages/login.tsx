@@ -83,7 +83,7 @@ export async function loginToJellyfin(loginState: LoginState, settings: ISetting
     }
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
     const settings = await getSettings();
 
     return { props: { settings } }
