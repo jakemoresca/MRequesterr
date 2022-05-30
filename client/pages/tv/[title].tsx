@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { NextPage } from 'next/types';
-import { ChangeEvent, ChangeEventHandler, useEffect } from 'react';
+import { ChangeEvent, useEffect } from 'react';
 import { SetterOrUpdater, useRecoilState } from 'recoil';
 import MediaCard from '../../components/mediacard';
 import { mediaState, MediaStateType, seriesRequestState } from '../../states/media';

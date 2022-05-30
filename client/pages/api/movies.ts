@@ -1,7 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiResponse } from 'next'
 import { IMedia } from '../../models/media';
-import { IMovieRequest } from '../../models/movieRequest';
 import { IRadarrMovie, IRadarrQueue } from '../../models/radarrMovies';
 import { IMovieSettings, ISettings } from '../../models/settings'
 import { ISonarrRootFolder } from '../../models/sonarrSeries';

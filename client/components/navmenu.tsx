@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChangeEventHandler, KeyboardEventHandler, useState } from "react";
-import { Collapse, DropdownItem, DropdownMenu, DropdownToggle, Input, Nav, Navbar, NavbarBrand, NavbarText, NavbarToggler, NavItem, NavLink, UncontrolledDropdown } from "reactstrap";
+import { Collapse, DropdownItem, DropdownMenu, DropdownToggle, Input, Nav, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink, UncontrolledDropdown } from "reactstrap";
 import { useRecoilState } from "recoil";
 import { authState } from "../states/auth";
 
@@ -9,6 +9,7 @@ const NavMenu = () => {
     const router = useRouter();
     const [searchText, setSearchText] = useState<string>("");
     const [, setUserState] = useRecoilState(authState);
+    const [isNavBarOpen, setIsNavBarOpen] = useState<boolean>(false);
 
     const handleSearch: KeyboardEventHandler<HTMLInputElement> = (event) => {
         if (event.code === 'Enter') {
@@ -25,13 +26,17 @@ const NavMenu = () => {
         router.push("/login");
     }
 
+    const handleToggler = () => {
+        setIsNavBarOpen(!isNavBarOpen);
+    }
+
     return (
         <Navbar color="primary" dark expand="md" fixed="top">
             <NavbarBrand href="/">
                 MRequesterr
             </NavbarBrand>
-            <NavbarToggler onClick={function noRefCheck() { }} />
-            <Collapse navbar>
+            <NavbarToggler onClick={handleToggler} />
+            <Collapse navbar isOpen={isNavBarOpen}>
                 <Nav navbar>
                     <NavItem>
                         <Link href="/" passHref>
@@ -54,7 +59,7 @@ const NavMenu = () => {
                         <DropdownToggle caret nav>
                             Release Calendar
                         </DropdownToggle>
-                        <DropdownMenu right>
+                        <DropdownMenu end>
                             <Link passHref href="/calendar/movie">
                                 <DropdownItem >
                                     Movies
@@ -71,7 +76,12 @@ const NavMenu = () => {
                 <div className="col-md-4 col-lg-3 align-self-center">
                     <Input type="search" placeholder="Search" onKeyUp={handleSearch} onChange={handleChange} value={searchText} />
                 </div>
-                <div className="navbar-nav position-absolute end-0">
+                <div className="navbar-nav position-absolute end-0 d-none d-sm-none d-md-block">
+                    <div className="nav-item text-nowrap">
+                        <a className="nav-link px-3" href="#" onClick={handleLogout}>Sign out</a>
+                    </div>
+                </div>
+                <div className="navbar-nav d-block d-sm-block d-md-none">
                     <div className="nav-item text-nowrap">
                         <a className="nav-link px-3" href="#" onClick={handleLogout}>Sign out</a>
                     </div>

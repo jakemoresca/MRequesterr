@@ -12,7 +12,6 @@ import { Container, Card, CardBody, CardTitle, Progress, Table } from 'reactstra
 import { IRadarrMovie, RadarrQueueRecord } from '../../models/radarrMovies';
 import Authenticate from '../../components/authenticate';
 import Head from 'next/head';
-import { IMedia } from '../../models/media';
 
 export interface IMovieProps {
     settings: ISettings;

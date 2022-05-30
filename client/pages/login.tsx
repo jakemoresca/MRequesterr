@@ -37,7 +37,7 @@ const Login = (props: ILoginProps) => {
         await loginToJellyfin(loginState, props.settings, setAuthState, router);
     }
 
-    return (<Form data-bitwarden-watching="1" style={{ maxWidth: 330 }} className="col align-self-center">
+    return (<Form data-bitwarden-watching="1" style={{ maxWidth: 330 }} className="col align-self-center" action="\" onSubmit={handleLogin}>
         <Head>
             <title>Login</title>
         </Head>
@@ -54,7 +54,7 @@ const Login = (props: ILoginProps) => {
         </div>
 
 
-        <button className="w-100 btn btn-lg btn-primary" type="button" onClick={handleLogin}>Sign in</button>
+        <button className="w-100 btn btn-lg btn-primary" type="submit" onSubmit={handleLogin}>Sign in</button>
         <p className="mt-5 mb-3 text-muted">© 2022</p>
     </Form>);
 };
