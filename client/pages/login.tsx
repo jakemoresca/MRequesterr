@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { NextRouter, useRouter } from "next/router";
-import React, { ChangeEventHandler, ReactElement, useState } from "react";
+import React, { ChangeEventHandler, FormEventHandler, ReactElement, useState } from "react";
 import { Container, Form } from "reactstrap";
 import { SetterOrUpdater, useRecoilState } from "recoil";
 import Icons from "../components/icons";
@@ -33,11 +33,12 @@ const Login = (props: ILoginProps) => {
         setLoginState(newState);
     }
 
-    const handleLogin = async () => {
+    const handleLogin: FormEventHandler = async (event) => {
         await loginToJellyfin(loginState, props.settings, setAuthState, router);
+        event.defaultPrevented = true;
     }
 
-    return (<Form data-bitwarden-watching="1" style={{ maxWidth: 330 }} className="col align-self-center" action="\" onSubmit={handleLogin}>
+    return (<Form data-bitwarden-watching="1" style={{ maxWidth: 330 }} className="col align-self-center" action="/" onSubmit={handleLogin}>
         <Head>
             <title>Login</title>
         </Head>
