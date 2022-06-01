@@ -12,21 +12,18 @@ const Authenticate = (props: AuthenticateProps) => {
     const router = useRouter();
 
     useEffect(() => {
+        const authLocalStorage = localStorage.getItem("authStateToken");
 
-        setTimeout(() => {
-            const authLocalStorage = localStorage.getItem("authStateToken");
-
-            if (authLocalStorage) {
+        if(userState == undefined) {
+            if(authLocalStorage != null) {
                 const newState = { AccessToken: authLocalStorage, ServerId: "1" }
                 setUserState(newState);
             }
             else {
-                if (!userState?.AccessToken) {
-                    router.push("/login");
-                }
+                router.push("/login");
             }
-        }, 0);
-    }, []);
+        }
+    }, [userState]);
 
     if (!userState) {
         return (<></>);

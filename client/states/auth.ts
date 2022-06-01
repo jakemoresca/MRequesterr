@@ -7,6 +7,6 @@ export interface IAuthState
 }
 
 export const authState = atom<IAuthState>({
-    key: 'auth', // unique ID (with respect to other atoms/selectors)
+    key: 'authState', // unique ID (with respect to other atoms/selectors)
     default: undefined, // default value (aka initial value)
 });
