@@ -49,7 +49,7 @@ const Movie: NextPage<IMovieProps> = (props) => {
         <Head>
             <title>View Movie</title>
         </Head>
-        <Authenticate>
+        <Authenticate settings={props.settings}>
             <MediaCard media={media} handleRequest={handleRequest} />
             <br />
             <Container fluid className='d-flex flex-row'>

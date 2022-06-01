@@ -2,8 +2,8 @@ import { atom } from "recoil";
 
 export interface IAuthState
 {
-    AccessToken: string;
-    ServerId: string;
+    AccessToken?: string;
+    ServerId?: string;
 }
 
 export const authState = atom<IAuthState>({

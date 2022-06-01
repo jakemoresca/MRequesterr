@@ -22,8 +22,8 @@ const NavMenu = () => {
     }
 
     const handleLogout = () => {
-        setUserState({ AccessToken: "", ServerId: "" });
-        router.push("/login");
+        localStorage.removeItem("authStateToken");
+        setUserState({});
     }
 
     const handleToggler = () => {

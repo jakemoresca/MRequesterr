@@ -7,8 +7,14 @@ import { SetterOrUpdater, useRecoilState } from 'recoil'
 import { IPopularMoviesState, IPopularSeriesState, popularMoviesState, popularSeriesState } from '../states/discover'
 import { useEffect } from 'react'
 import Authenticate from '../components/authenticate'
+import { ISettings } from '../models/settings'
+import { getSettings } from './api/settings'
 
-const Discover: NextPage = () => {
+export interface IHomeProps {
+  settings: ISettings;
+}
+
+const Discover: NextPage<IHomeProps> = (props) => {
   const [moviesState, setMovieState] = useRecoilState(popularMoviesState);
   const [seriesState, setSeriesState] = useRecoilState(popularSeriesState);
 
@@ -68,7 +74,7 @@ const Discover: NextPage = () => {
         <title>Discover</title>
       </Head>
       <div className="container-fluid">
-        <Authenticate>
+        <Authenticate settings={props.settings}>
           <LazyCarousel items={moviesState.movies} handleNext={handleNextMovie} getItemTypeAndUrl={getItemTypeAndUrlMovie} title="Movies" />
           <hr />
           <LazyCarousel items={seriesState.series} handleNext={handleNextSeries} getItemTypeAndUrl={getItemTypeAndUrlSeries} title="Series" />
@@ -87,6 +93,12 @@ async function fetchData(setMovieState: SetterOrUpdater<IPopularMoviesState>, se
 
   setSeriesState({ series, currentPage: popularSeries.page });
   setMovieState({ movies, currentPage: popularMovies.page });
+}
+
+export async function getStaticProps() {
+  const settings = await getSettings();
+
+  return { props: { settings } }
 }
 
 export default Discover;

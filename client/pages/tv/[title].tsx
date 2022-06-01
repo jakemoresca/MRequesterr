@@ -63,7 +63,7 @@ const TV: NextPage<ITVProps> = (props) => {
 
     return (<Container fluid>
         <Head><title>View TV</title></Head>
-        <Authenticate>
+        <Authenticate settings={props.settings}>
             <MediaCard media={media} handleRequest={handleRequest} isDirty={isDirty} />
             <br />
             <Container fluid className='d-flex flex-row'>

@@ -47,7 +47,7 @@ const TV: NextPage<ITVProps> = (props) => {
         <Head>
             <title>Search</title>
         </Head>
-        <Authenticate>
+        <Authenticate settings={props.settings}>
             <Input type="search" placeholder="Search" onKeyUp={handleSearch} onChange={handleChange} value={searchText} />
 
             {searchResults?.map((searchResult, index) => {

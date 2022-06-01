@@ -6,10 +6,12 @@ import Head from 'next/head';
 import { getSettings } from '../api/settings';
 import { getServiceUrl as getSonarrServiceUrl } from '../api/series';
 import { getServiceUrl as getRadarrServiceUrl } from '../api/movies';
+import { ISettings } from '../../models/settings';
 
 export interface ICalendarProps {
     sonarrCalendarUrl: string;
     radarrCalendarUrl: string;
+    settings: ISettings;
 }
 
 const Calendar: NextPage<ICalendarProps> = (props) => {
@@ -25,7 +27,7 @@ const Calendar: NextPage<ICalendarProps> = (props) => {
         <Head>
             <title>View Release Calendar</title>
         </Head>
-        <Authenticate>
+        <Authenticate settings={props.settings}>
             {calendarComponent}
         </Authenticate>
     </Container>);
@@ -45,7 +47,7 @@ export async function getStaticProps() {
     const sonarrCalendarUrl = getSonarrServiceUrl(settings.integrationSettings.series, "/feed/v3/calendar/Sonarr.ics");
     const radarrCalendarUrl = getRadarrServiceUrl(settings.integrationSettings.movies, "/feed/v3/calendar/Radarr.ics");
 
-    return { props: { sonarrCalendarUrl, radarrCalendarUrl } }
+    return { props: { sonarrCalendarUrl, radarrCalendarUrl, settings } }
 }
 
 export default Calendar;

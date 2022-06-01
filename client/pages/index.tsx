@@ -47,7 +47,7 @@ const Home: NextPage<IHomeProps> = (props) => {
       <Head>
         <title>Now Playing</title>
       </Head>
-      <Authenticate>
+      <Authenticate settings={props.settings}>
         <div className="container-fluid">
           <LazyCarousel items={props.movies} getItemTypeAndUrl={getRadarrItemTypeAndUrlAction} title="Movies" />
           <hr />

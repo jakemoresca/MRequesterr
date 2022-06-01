@@ -1,12 +1,10 @@
 import Head from "next/head";
-import { NextRouter, useRouter } from "next/router";
 import React, { ChangeEventHandler, FormEventHandler, useState } from "react";
 import { Container, Form } from "reactstrap";
 import { SetterOrUpdater, useRecoilState } from "recoil";
 import { ISettings } from "../models/settings";
+import { login } from "../pages/api/user";
 import { authState, IAuthState } from "../states/auth";
-import { getSettings } from "./api/settings";
-import { login } from "./api/user";
 
 export interface LoginState {
     username?: string;
@@ -20,7 +18,6 @@ export interface ILoginProps {
 const Login = (props: ILoginProps) => {
     const [loginState, setLoginState] = useState<LoginState>({ username: "", password: "" });
     const [_, setAuthState] = useRecoilState(authState)
-    const router = useRouter();
 
     const handleLoginChange: ChangeEventHandler<HTMLInputElement> = (event) => {
         const newState = { ...loginState, username: event.currentTarget.value };
@@ -32,8 +29,8 @@ const Login = (props: ILoginProps) => {
         setLoginState(newState);
     }
 
-    const handleLogin: FormEventHandler = async (event) => {
-        await loginToJellyfin(loginState, props.settings, setAuthState, router);
+    const handleLogin: FormEventHandler = (event) => {
+        loginToJellyfin(loginState, props.settings, setAuthState);
         event.defaultPrevented = true;
     }
 
@@ -61,21 +58,13 @@ const Login = (props: ILoginProps) => {
     </Container>);
 };
 
-export async function loginToJellyfin(loginState: LoginState, settings: ISettings, setAuthState: SetterOrUpdater<IAuthState>, router: NextRouter) {
+export async function loginToJellyfin(loginState: LoginState, settings: ISettings, setAuthState: SetterOrUpdater<IAuthState>) {
     const result = await login(loginState?.username, loginState?.password, settings);
 
     if (result.AccessToken) {
         setAuthState(result);
         localStorage.setItem("authStateToken", result.AccessToken);
-
-        router.push("/");
     }
-}
-
-export async function getStaticProps() {
-    const settings = await getSettings();
-
-    return { props: { settings } }
 }
 
 export default Login;

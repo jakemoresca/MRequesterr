@@ -47,7 +47,7 @@ const Requests: NextPage<IRequestsProps> = (props) => {
         <title>Requests</title>
       </Head>
       <div className="container-fluid">
-        <Authenticate>
+        <Authenticate settings={props.settings}>
           <LazyCarousel items={props.movies} getItemTypeAndUrl={getRadarrItemTypeAndUrlAction} showProgress={true} title="Movies" />
           <hr />
           <LazyCarousel items={props.series} getItemTypeAndUrl={getSonarrItemTypeAndUrlAction} showProgress={true} title="Series" />
