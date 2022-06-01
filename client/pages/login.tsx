@@ -38,7 +38,8 @@ const Login = (props: ILoginProps) => {
         event.defaultPrevented = true;
     }
 
-    return (<Form data-bitwarden-watching="1" style={{ maxWidth: 330 }} className="col align-self-center" action="/" onSubmit={handleLogin}>
+    return (<Container className="w-100 m-auto py-4 d-flex justify-content-center">
+    <Form data-bitwarden-watching="1" style={{ maxWidth: 330 }} className="col align-self-center" action="/" onSubmit={handleLogin}>
         <Head>
             <title>Login</title>
         </Head>
@@ -57,21 +58,9 @@ const Login = (props: ILoginProps) => {
 
         <button className="w-100 btn btn-lg btn-primary" type="submit" onSubmit={handleLogin}>Sign in</button>
         <p className="mt-5 mb-3 text-muted">© 2022</p>
-    </Form>);
+    </Form>
+    </Container>);
 };
-
-Login.getLayout = function getLayout(page: ReactElement) {
-    return (
-        <React.Fragment>
-            <div className="d-flex align-items-center vh-100">
-                <Icons />
-                <Container className="w-100 m-auto py-4 d-flex justify-content-center">
-                    {page}
-                </Container>
-            </div>
-        </React.Fragment>
-    )
-}
 
 export async function loginToJellyfin(loginState: LoginState, settings: ISettings, setAuthState: SetterOrUpdater<IAuthState>, router: NextRouter) {
     const result = await login(loginState?.username, loginState?.password, settings);

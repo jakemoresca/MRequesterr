@@ -8,7 +8,7 @@ import { authState } from "../states/auth";
 const NavMenu = () => {
     const router = useRouter();
     const [searchText, setSearchText] = useState<string>("");
-    const [, setUserState] = useRecoilState(authState);
+    const [userState, setUserState] = useRecoilState(authState);
     const [isNavBarOpen, setIsNavBarOpen] = useState<boolean>(false);
 
     const handleSearch: KeyboardEventHandler<HTMLInputElement> = (event) => {
@@ -36,57 +36,58 @@ const NavMenu = () => {
                 MRequesterr
             </NavbarBrand>
             <NavbarToggler onClick={handleToggler} />
-            <Collapse navbar isOpen={isNavBarOpen}>
-                <Nav navbar>
-                    <NavItem>
-                        <Link href="/" passHref>
-                            <NavLink>
-                                Now Playing
-                            </NavLink>
-                        </Link>
-                    </NavItem>
-                    <NavItem>
-                        <Link passHref href="/discover">
-                            <NavLink>Discover</NavLink>
-                        </Link>
-                    </NavItem>
-                    <NavItem>
-                        <Link passHref href="/requests">
-                            <NavLink>Requests</NavLink>
-                        </Link>
-                    </NavItem>
-                    <UncontrolledDropdown inNavbar nav>
-                        <DropdownToggle caret nav>
-                            Release Calendar
-                        </DropdownToggle>
-                        <DropdownMenu end>
-                            <Link passHref href="/calendar/movie">
-                                <DropdownItem >
-                                    Movies
-                                </DropdownItem>
+            {userState?.AccessToken && (
+                <Collapse navbar isOpen={isNavBarOpen}>
+                    <Nav navbar>
+                        <NavItem>
+                            <Link href="/" passHref>
+                                <NavLink>
+                                    Now Playing
+                                </NavLink>
                             </Link>
-                            <Link passHref href="/calendar/tv">
-                                <DropdownItem>
-                                    Series
-                                </DropdownItem>
+                        </NavItem>
+                        <NavItem>
+                            <Link passHref href="/discover">
+                                <NavLink>Discover</NavLink>
                             </Link>
-                        </DropdownMenu>
-                    </UncontrolledDropdown>
-                </Nav>
-                <div className="col-md-4 col-lg-3 align-self-center">
-                    <Input type="search" placeholder="Search" onKeyUp={handleSearch} onChange={handleChange} value={searchText} />
-                </div>
-                <div className="navbar-nav position-absolute end-0 d-none d-sm-none d-md-block">
-                    <div className="nav-item text-nowrap">
-                        <a className="nav-link px-3" href="#" onClick={handleLogout}>Sign out</a>
+                        </NavItem>
+                        <NavItem>
+                            <Link passHref href="/requests">
+                                <NavLink>Requests</NavLink>
+                            </Link>
+                        </NavItem>
+                        <UncontrolledDropdown inNavbar nav>
+                            <DropdownToggle caret nav>
+                                Release Calendar
+                            </DropdownToggle>
+                            <DropdownMenu end>
+                                <Link passHref href="/calendar/movie">
+                                    <DropdownItem >
+                                        Movies
+                                    </DropdownItem>
+                                </Link>
+                                <Link passHref href="/calendar/tv">
+                                    <DropdownItem>
+                                        Series
+                                    </DropdownItem>
+                                </Link>
+                            </DropdownMenu>
+                        </UncontrolledDropdown>
+                    </Nav>
+                    <div className="col-md-4 col-lg-3 align-self-center">
+                        <Input type="search" placeholder="Search" onKeyUp={handleSearch} onChange={handleChange} value={searchText} />
                     </div>
-                </div>
-                <div className="navbar-nav d-block d-sm-block d-md-none">
-                    <div className="nav-item text-nowrap">
-                        <a className="nav-link px-3" href="#" onClick={handleLogout}>Sign out</a>
+                    <div className="navbar-nav position-absolute end-0 d-none d-sm-none d-md-block">
+                        <div className="nav-item text-nowrap">
+                            <a className="nav-link px-3" href="#" onClick={handleLogout}>Sign out</a>
+                        </div>
                     </div>
-                </div>
-            </Collapse>
+                    <div className="navbar-nav d-block d-sm-block d-md-none">
+                        <div className="nav-item text-nowrap">
+                            <a className="nav-link px-3" href="#" onClick={handleLogout}>Sign out</a>
+                        </div>
+                    </div>
+                </Collapse>)}
         </Navbar>)
 };
 

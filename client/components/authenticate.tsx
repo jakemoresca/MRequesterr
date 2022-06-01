@@ -19,9 +19,6 @@ const Authenticate = (props: AuthenticateProps) => {
                 const newState = { AccessToken: authLocalStorage, ServerId: "1" }
                 setUserState(newState);
             }
-            else {
-                router.push("/login");
-            }
         }
     }, [userState]);
 
