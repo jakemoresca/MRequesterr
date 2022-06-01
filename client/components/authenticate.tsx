@@ -9,7 +9,6 @@ export interface AuthenticateProps {
 
 const Authenticate = (props: AuthenticateProps) => {
     const [userState, setUserState] = useRecoilState(authState);
-    const router = useRouter();
 
     useEffect(() => {
         const authLocalStorage = localStorage.getItem("authStateToken");

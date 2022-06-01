@@ -1,9 +1,8 @@
 import Head from "next/head";
 import { NextRouter, useRouter } from "next/router";
-import React, { ChangeEventHandler, FormEventHandler, ReactElement, useState } from "react";
+import React, { ChangeEventHandler, FormEventHandler, useState } from "react";
 import { Container, Form } from "reactstrap";
 import { SetterOrUpdater, useRecoilState } from "recoil";
-import Icons from "../components/icons";
 import { ISettings } from "../models/settings";
 import { authState, IAuthState } from "../states/auth";
 import { getSettings } from "./api/settings";
