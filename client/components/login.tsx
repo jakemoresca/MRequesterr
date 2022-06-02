@@ -31,7 +31,9 @@ const Login = (props: ILoginProps) => {
 
     const handleLogin: FormEventHandler = (event) => {
         loginToJellyfin(loginState, props.settings, setAuthState);
-        event.defaultPrevented = true;
+        event.preventDefault();
+        
+        return false;
     }
 
     return (<Container className="w-100 m-auto py-4 d-flex justify-content-center">
