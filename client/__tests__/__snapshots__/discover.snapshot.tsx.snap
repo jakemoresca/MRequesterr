@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders discover unchanged 1`] = `
+<div>
+  <div>
+    <div
+      class="container-fluid"
+    >
+      <mock-authenticate
+        data-testid="authenticate"
+      >
+        <mock-carousel
+          data-testid="carousel"
+        />
+        <hr />
+        <mock-carousel
+          data-testid="carousel"
+        />
+      </mock-authenticate>
+    </div>
+  </div>
+</div>
+`;

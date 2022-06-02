@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders requests unchanged 1`] = `
+<div>
+  <div>
+    <div
+      class="container-fluid"
+    >
+      <mock-authenticate
+        data-testid="authenticate"
+      >
+        <hr />
+      </mock-authenticate>
+    </div>
+  </div>
+</div>
+`;

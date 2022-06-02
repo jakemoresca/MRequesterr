@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders homepage unchanged 1`] = `
+<div>
+  <div>
+    <mock-authenticate
+      data-testid="authenticate"
+    >
+      <div
+        class="container-fluid"
+      >
+        <hr />
+      </div>
+    </mock-authenticate>
+  </div>
+</div>
+`;
