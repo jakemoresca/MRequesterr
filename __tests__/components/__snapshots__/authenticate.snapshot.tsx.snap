@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders authenticate unchanged 1`] = `
+<div>
+  <div
+    class="w-100 m-auto py-4 d-flex justify-content-center container"
+  >
+    <form
+      action="/"
+      class="col align-self-center"
+      data-bitwarden-watching="1"
+      style="max-width: 330px;"
+    >
+      <svg
+        class="bi me-2"
+        height="24"
+        style="fill: white;"
+        width="30"
+      >
+        <use
+          xlink:href="#bootstrap"
+        />
+      </svg>
+      <h1
+        class="h3 mb-3 fw-normal"
+      >
+        Please sign in using your Jellyfin account
+      </h1>
+      <div
+        class="form-floating"
+      >
+        <input
+          class="form-control"
+          id="floatingInput"
+          placeholder="Username"
+          type="text"
+          value=""
+        />
+        <label
+          for="floatingInput"
+        >
+          Username
+        </label>
+      </div>
+      <div
+        class="form-floating"
+      >
+        <input
+          class="form-control"
+          id="floatingPassword"
+          placeholder="Password"
+          type="password"
+          value=""
+        />
+        <label
+          for="floatingPassword"
+        >
+          Password
+        </label>
+      </div>
+      <button
+        class="w-100 btn btn-lg btn-primary"
+        type="submit"
+      >
+        Sign in
+      </button>
+      <p
+        class="mt-5 mb-3 text-muted"
+      >
+        © 2022
+      </p>
+    </form>
+  </div>
+</div>
+`;

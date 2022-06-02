@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders card unchanged 1`] = `
+<div>
+  <div
+    class="col bg-light card border-light"
+  >
+    <img
+      alt="title"
+      class="card-img-top"
+      src="test"
+      width="100%"
+    />
+    <div
+      class="card-img-overlay"
+    />
+  </div>
+</div>
+`;
