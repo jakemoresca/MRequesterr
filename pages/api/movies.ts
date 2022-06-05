@@ -53,7 +53,8 @@ export async function requestMovie(media: IRadarrMovie, overrideSettings?: ISett
         qualityProfileId: 1,
         apikey,
         monitored: true,
-        rootFolderPath: rootFolderPath.path
+        rootFolderPath: rootFolderPath.path,
+        addOptions: { searchForMovie: true }
     }
 
     var requestMovieUrl = getServiceUrl(settings.integrationSettings.movies, `${API_BASE_URL}/movie`);

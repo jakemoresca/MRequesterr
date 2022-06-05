@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders movie page unchanged 1`] = `
+<div>
+  <div
+    class="py-3 container-fluid"
+  >
+    <mock-authenticate
+      data-testid="authenticate"
+    >
+      <div
+        class="bg-dark col-12 card text-white border-dark"
+      >
+        <div
+          class="row g-0"
+        >
+          <div
+            class="col-md-2"
+          >
+            <img
+              class="rounded-start w-auto card-img-top"
+              height="368"
+              width="250"
+            />
+          </div>
+          <div
+            class="col-md-10"
+          >
+            <div
+              class="card-body"
+            >
+              <h2
+                class="card-title"
+              />
+              <h6
+                class="mb-2 text-muted card-subtitle"
+              />
+              <h6
+                class="mb-2 text-muted card-subtitle"
+              />
+              <button
+                class="btn btn-primary"
+                type="button"
+              >
+                Request
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br />
+      <div
+        class="d-flex flex-row container-fluid"
+      />
+    </mock-authenticate>
+  </div>
+</div>
+`;

@@ -47,6 +47,6 @@ it('renders discover unchanged', () => {
     }
   }
 
-  const { container } = render(<RecoilRoot><Discover settings={settings} /></RecoilRoot>)
+  const { container } = render(<RecoilRoot override={true}><Discover settings={settings} /></RecoilRoot>)
   expect(container).toMatchSnapshot()
 })

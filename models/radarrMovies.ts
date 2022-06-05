@@ -83,7 +83,7 @@ export interface IRadarrMovie {
     genres: string[];
     tags: any[];
     added: Date;
-    ratings: Ratings;
+    ratings?: Ratings;
     id: number;
     addOptions: AddOptions;
     rootFolderPath: string;
@@ -116,7 +116,7 @@ export enum SourceType {
 export interface Image {
     coverType: string;
     url: string;
-    remoteUrl: string;
+    remoteUrl?: string;
 }
 
 export interface Ratings {
