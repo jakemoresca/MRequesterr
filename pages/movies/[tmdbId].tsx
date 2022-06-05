@@ -26,7 +26,7 @@ const Movie: NextPage<IMovieProps> = (props) => {
 
     const radarrQueueRecord = media?.additionalInfo as RadarrQueueRecord;
     const progressValue = (radarrQueueRecord?.sizeleft - radarrQueueRecord?.size) == 0 ? 0 :
-        (radarrQueueRecord?.sizeleft - radarrQueueRecord?.size) / radarrQueueRecord?.size;
+        Math.abs((radarrQueueRecord?.sizeleft - radarrQueueRecord?.size) / radarrQueueRecord?.size) * 100;
 
     const inQueue = progressValue.toString() != 'NaN'
     const progress = inQueue ? (
