@@ -24,45 +24,13 @@ exports[`renders authenticate unchanged 1`] = `
       <h1
         class="h3 mb-3 fw-normal"
       >
-        Please sign in using your Jellyfin account
+        Please sign in using your Plex account.
       </h1>
-      <div
-        class="form-floating"
-      >
-        <input
-          class="form-control"
-          id="floatingInput"
-          placeholder="Username"
-          type="text"
-          value=""
-        />
-        <label
-          for="floatingInput"
-        >
-          Username
-        </label>
-      </div>
-      <div
-        class="form-floating"
-      >
-        <input
-          class="form-control"
-          id="floatingPassword"
-          placeholder="Password"
-          type="password"
-          value=""
-        />
-        <label
-          for="floatingPassword"
-        >
-          Password
-        </label>
-      </div>
       <button
-        class="w-100 btn btn-lg btn-primary"
-        type="submit"
+        class="w-100 btn btn-primary"
+        type="button"
       >
-        Sign in
+        Plex Sign in
       </button>
       <p
         class="mt-5 mb-3 text-muted"

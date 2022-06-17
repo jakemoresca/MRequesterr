@@ -22,5 +22,6 @@
             "useSsl": true
         },
         "tmdbApiKey": ""
-    }
+    },
+    "plexLogin": true
 }

@@ -3,6 +3,7 @@ import type { NextApiResponse } from 'next'
 import { IAuthSettings, ISettings } from '../../models/settings'
 import { IAuthState } from '../../states/auth';
 import { getSettings } from './settings';
+import { PlexOauth, IPlexClientDetails } from "plex-oauth"
 
 export default async function handler(
     res: NextApiResponse<ISettings>
@@ -52,4 +53,38 @@ const getServiceUrl = (authSettings: IAuthSettings, relativeServiceUrl: string, 
     }
 
     return serviceUrl;
+}
+
+let clientInformation: IPlexClientDetails = {
+    clientIdentifier: "RYDERSIR_MREQUESTERR", // This is a unique identifier used to identify your app with Plex.
+    product: "RYDERSIR",              // Name of your application
+    device: "RYDERSIR DEVICE",            // The type of device your application is running on
+    version: "1",                               // Version of your application
+    forwardUrl: "http://localhost:3000/redirect",       // Url to forward back to after signing in.
+    platform: "Web",                            // Optional - Platform your application runs on - Defaults to 'Web'
+}
+
+export async function plexLogin(callback: (authState: IAuthState) => void) {
+    const plexOauth = new PlexOauth(clientInformation);
+
+    // Get hosted UI URL and Pin Id
+    const data = await plexOauth.requestHostedLoginURL();
+    const [hostedUILink, pinId] = data;
+
+    var child = window.open(hostedUILink, '', 'toolbar=0,status=0,width=626,height=436') as Window;
+    var timer = setInterval(checkChild, 500);
+
+    function checkChild() {
+        if (child.closed) {
+            // Check for the auth token, once returning to the application
+            plexOauth.checkForAuthToken(pinId).then(authToken => {
+                //console.log(authToken); // Returns the auth token if set, otherwise returns null
+                callback({ AccessToken: authToken ?? undefined, ServerId: "" });
+            }).catch(err => {
+                throw err;
+            });
+
+            clearInterval(timer);
+        }
+    }
 }

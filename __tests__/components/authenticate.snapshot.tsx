@@ -28,7 +28,8 @@ it('renders authenticate unchanged', () => {
         "port": 443,
         "useSsl": true
       }
-    }
+    }, 
+    plexLogin: true
   }
 
   const { container } = render(<RecoilRoot><Authenticate settings={settings} /></RecoilRoot>)

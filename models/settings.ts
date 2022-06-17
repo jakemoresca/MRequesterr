@@ -1,6 +1,7 @@
 export interface ISettings
 {
     integrationSettings: IIntegrationSettings;
+    plexLogin: boolean;
 }
 
 export interface IIntegrationSettings
