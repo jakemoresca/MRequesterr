@@ -21,8 +21,8 @@ export async function getMovies(overrideSettings?: ISettings): Promise<IMedia[]>
     return [];
 }
 
-export async function useMovies(overrideSettings?: ISettings) {
-    const settings = overrideSettings ?? await getSettings();
+export function useMovies(overrideSettings: ISettings) {
+    const settings = overrideSettings;
     const getMovieUrl = getServiceUrl(settings.integrationSettings.movies, `${API_BASE_URL}/movie`);
 
     const fetcher = (url: string): Promise<IMedia[]> => fetch(url).then(r => r.json())
@@ -35,8 +35,8 @@ export async function useMovies(overrideSettings?: ISettings) {
     }
 }
 
-export async function useAvailableMovies(overrideSettings?: ISettings) {
-    var { movies, isMoviesLoading, isError } = await useMovies(overrideSettings);
+export function useAvailableMovies(overrideSettings: ISettings) {
+    var { movies, isMoviesLoading, isError } = useMovies(overrideSettings);
     var availableMovies = (movies ?? []).filter(x => x.hasFile);
 
     return {
@@ -57,6 +57,20 @@ export async function getMovieLookup(overrideSettings?: ISettings, tmdbId?: numb
     }
 
     throw new Error("Error retrieving Movie");
+}
+
+export function useMovieLookup(overrideSettings: ISettings, tmdbId?: number) {
+    const settings = overrideSettings;
+    const getMovieUrl = getServiceUrl(settings.integrationSettings.movies, `${API_BASE_URL}/movie/lookup/tmdb`, `&tmdbId=${tmdbId}`);
+
+    const fetcher = (url: string): Promise<IRadarrMovie> => fetch(url).then(r => r.json())
+    const { data, error } = useSWR(() => getMovieUrl, fetcher)
+
+    return {
+        movieLookup: data,
+        isLookupLoading: !error && !data,
+        isError: error
+    }
 }
 
 export async function requestMovie(media: IRadarrMovie, overrideSettings?: ISettings): Promise<IRadarrMovie> {
@@ -118,6 +132,20 @@ export async function getQueue(overrideSettings?: ISettings): Promise<IRadarrQue
     }
 
     throw new Error("Cannot get Radarr Queue")
+}
+
+export function useRadarrQueue(overrideSettings: ISettings) {
+    const settings = overrideSettings;
+    const getQueueUrl = getServiceUrl(settings.integrationSettings.movies, `${API_BASE_URL}/queue`, "&pageSize=20&includeUnknownMovieItems=false");
+
+    const fetcher = (url: string): Promise<IRadarrQueue> => fetch(url).then(r => r.json())
+    const { data, error } = useSWR(() => getQueueUrl, fetcher)
+
+    return {
+        radarrQueue: data,
+        isQueueLoading: !error && !data,
+        isError: error
+    }
 }
 
 export const getServiceUrl = (movieSettings: IMovieSettings, relativeServiceUrl: string, queryString?: string) => {

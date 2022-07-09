@@ -20,8 +20,8 @@ export async function getSeries(overrideSettings?: ISettings): Promise<IMedia[]>
     return [];
 }
 
-export async function useSeries(overrideSettings?: ISettings) {
-    const settings = overrideSettings ?? await getSettings();
+export function useSeries(overrideSettings: ISettings) {
+    const settings = overrideSettings;
     const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/series`);
 
     const fetcher = (url: string): Promise<IMedia[]> => fetch(url).then(r => r.json())
@@ -34,8 +34,8 @@ export async function useSeries(overrideSettings?: ISettings) {
     }
 }
 
-export async function useAvailableSeries(overrideSettings?: ISettings) {
-    var { series, isSeriesLoading, isError } = await useSeries(overrideSettings);
+export function useAvailableSeries(overrideSettings: ISettings) {
+    var { series, isSeriesLoading, isError } = useSeries(overrideSettings);
     var availableSeries = (series ?? []).filter(x => x.statistics.percentOfEpisodes == 100);
 
     return {

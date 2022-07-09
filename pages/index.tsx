@@ -12,16 +12,14 @@ import { getSettings } from '../services/settings'
 
 export interface IHomeProps {
   settings: ISettings;
-  // movies: IMedia[];
-  // series: IMedia[];
 }
 
-async function Home(props: IHomeProps) {
+function Home(props: IHomeProps) {
   const movieSettings = props.settings.integrationSettings.movies
   const seriesSettings = props.settings.integrationSettings.series
 
-  const { movies, isMoviesLoading } = await useAvailableMovies(props.settings as ISettings);
-  const { series, isSeriesLoading } = await useAvailableSeries(props.settings as ISettings)
+  const { movies, isMoviesLoading } = useAvailableMovies(props.settings as ISettings);
+  const { series, isSeriesLoading } = useAvailableSeries(props.settings as ISettings)
   
   var radarrPort = movieSettings.port
   var radarrHost = movieSettings.host

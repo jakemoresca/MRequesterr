@@ -1,3 +1,4 @@
+import useSWR from 'swr';
 import { IMedia } from '../models/media';
 import { ITmdbMovie, ITmdbMovieResult } from '../models/tmdbMovie';
 import { ITmdbSearch, ITmdbSearchResult } from '../models/tmdbSearch';
@@ -36,6 +37,19 @@ export async function getMovie(tmdbId: string): Promise<ITmdbMovieResult> {
     }
 
     throw new Error("Error retrieving Series");
+}
+
+export function useTmdbMovie(tmdbId: string) {
+  const getMovieUrl = `https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${apiKey}&language=en-US`;
+
+  const fetcher = (url: string): Promise<ITmdbMovieResult> => fetch(url).then(r => r.json())
+  const { data, error } = useSWR(() => getMovieUrl, fetcher)
+
+  return {
+      tmdbMovie: data,
+      isTmdbMovieLoading: !error && !data,
+      isError: error
+  }
 }
 
 export async function getSeries(title: string): Promise<ITmdbMovieResult> {

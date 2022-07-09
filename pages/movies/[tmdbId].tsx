@@ -9,110 +9,114 @@ import { Container, Card, CardBody, CardTitle, Progress, Table } from 'reactstra
 import { IRadarrMovie, RadarrQueueRecord } from '../../models/radarrMovies';
 import Authenticate from '../../components/authenticate';
 import Head from 'next/head';
-import { requestMovie, getQueue, getMovieLookup, getMovies as getRadarrMovies, } from '../../services/movies';
+import { requestMovie, getQueue, getMovieLookup, getMovies as getRadarrMovies, useMovies, useRadarrQueue, useMovieLookup, } from '../../services/movies';
 import { getSettings } from '../../services/settings';
-import { getMovie, convertToMedia } from '../../services/tmdb';
+import { getMovie, convertToMedia, useTmdbMovie } from '../../services/tmdb';
 
 export interface IMovieProps {
     settings: ISettings;
 }
 
-const Movie: NextPage<IMovieProps> = (props) => {
+function Movie(props: IMovieProps) {
     const [media, setMediaState] = useRecoilState(mediaState);
     const [movieRequest, setMovieRequestState] = useRecoilState(movieRequestState);
 
     const router = useRouter();
     const { tmdbId } = router.query;
 
-    const radarrQueueRecord = media?.additionalInfo as RadarrQueueRecord;
-    const progressValue = (radarrQueueRecord?.sizeleft - radarrQueueRecord?.size) == 0 ? 0 :
-        Math.abs((radarrQueueRecord?.sizeleft - radarrQueueRecord?.size) / radarrQueueRecord?.size) * 100;
+    const { tmdbMovie } = useTmdbMovie(tmdbId as string);
+    const { movies } = useMovies(props.settings);
+    const { radarrQueue } = useRadarrQueue(props.settings);
+    const { movieLookup } = useMovieLookup(props.settings, parseInt(tmdbId as string))
 
-    const inQueue = progressValue.toString() != 'NaN'
-    const progress = inQueue ? (
-        <>
-            <Progress className="col-md-9 bg-primary" value={progressValue} />
-            {`${progressValue} / 100`}
-        </>
-    ) : <>Movie is not in download queue</>
+    if (tmdbMovie != undefined && movies != undefined) {
+        const movieMedia = convertToMedia(tmdbMovie);
+        const radarrMovieMedia = movies.find(x => x.tmdbId == tmdbMovie.id.toString());
+        let media: MediaStateType;
 
-    useEffect(() => {
-        fetchData(tmdbId as string, setMediaState, setMovieRequestState, props.settings);
-    }, [tmdbId])
+        if (radarrMovieMedia) {
+            if (radarrQueue != undefined) {
+                const radarrQueueRecord = radarrQueue.records.find(x => x.movieId.toString() == radarrMovieMedia.id);
 
-    const handleRequest = async () => {
-        const movieResult = await requestMovie(movieRequest, props.settings);
-        setMovieRequestState(movieResult);
-    }
+                media = ({
+                    ...radarrMovieMedia, ...movieMedia, isAvailable: true,
+                    hasFile: radarrMovieMedia.hasFile, additionalInfo: radarrQueueRecord, titleSlug: radarrMovieMedia.titleSlug
+                });
+            }
+        }
+        else {
+            media = movieMedia;
+        }
 
-    return (<Container fluid className="py-3">
-        <Head>
-            <title>View Movie</title>
-        </Head>
-        <Authenticate settings={props.settings}>
-            <MediaCard media={media} handleRequest={handleRequest} />
-            <br />
-            <Container fluid className='d-flex flex-row'>
-                {media?.isAvailable && !media.hasFile &&
-                    <Card color="secondary col-md-4 col-sm-6 mx-1">
-                        <CardBody>
-                            <CardTitle tag="h5">
-                                Request Progress
-                            </CardTitle>
-                            {progress}
-                        </CardBody>
-                    </Card>
-                }
-                {media?.hasFile &&
-                    <Card color="secondary col-md-4 col-sm-6 mx-1">
-                        <CardBody>
-                            <CardTitle tag="h5">
-                                Downloaded Movie Information
-                            </CardTitle>
-                            <Table responsive>
-                                <thead>
-                                    <tr>
-                                        <th>Video Codec</th>
-                                        <th>Audio</th>
-                                        <th>Quality</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>{media.movieFile?.mediaInfo.videoCodec}</td>
-                                        <td>{media.movieFile?.mediaInfo.audioCodec}</td>
-                                        <td>{media.movieFile?.quality.quality.name}</td>
-                                    </tr>
-                                </tbody>
-                            </Table>
-                        </CardBody>
-                    </Card>
-                }
-            </Container>
-        </Authenticate>
-    </Container>);
-}
+        const radarrQueueRecord = media?.additionalInfo as RadarrQueueRecord;
+        const progressValue = (radarrQueueRecord?.sizeleft - radarrQueueRecord?.size) == 0 ? 0 :
+            Math.abs((radarrQueueRecord?.sizeleft - radarrQueueRecord?.size) / radarrQueueRecord?.size) * 100;
 
-async function fetchData(tmdbId: string, setMediaState: SetterOrUpdater<MediaStateType>, setMovieRequestState: SetterOrUpdater<IRadarrMovie>, settings: ISettings) {
-    const movie = await getMovie(tmdbId);
-    const radarrMovies = await getRadarrMovies(settings);
-    const radarrQueue = await getQueue(settings);
-    const radarrLookup = await getMovieLookup(settings, parseInt(tmdbId));
+        const inQueue = progressValue.toString() != 'NaN';
+        const progress = inQueue ? (
+            <>
+                <Progress className="col-md-9 bg-primary" value={progressValue} />
+                {`${progressValue} / 100`}
+            </>
+        ) : <>Movie is not in download queue</>;
 
-    const movieMedia = convertToMedia(movie);
-    const radarrMovieMedia = radarrMovies.find(x => x.tmdbId == movie.id.toString());
+        const handleRequest = async () => {
+            if (movieLookup != undefined) {
+                await requestMovie(movieRequest, props.settings);
+                //setMovieRequestState(movieResult);
+            }
+        };
 
-    if (radarrMovieMedia) {
-        const radarrQueueRecord = radarrQueue.records.find(x => x.movieId.toString() == radarrMovieMedia.id);
-
-        setMediaState({ ...radarrMovieMedia, ...movieMedia, isAvailable: true, 
-            hasFile: radarrMovieMedia.hasFile, additionalInfo: radarrQueueRecord, titleSlug: radarrMovieMedia.titleSlug });
+        return (<Container fluid className="py-3">
+            <Head>
+                <title>View Movie</title>
+            </Head>
+            <Authenticate settings={props.settings}>
+                <MediaCard media={media} handleRequest={handleRequest} />
+                <br />
+                <Container fluid className='d-flex flex-row'>
+                    {media?.isAvailable && !media.hasFile &&
+                        <Card color="secondary col-md-4 col-sm-6 mx-1">
+                            <CardBody>
+                                <CardTitle tag="h5">
+                                    Request Progress
+                                </CardTitle>
+                                {progress}
+                            </CardBody>
+                        </Card>}
+                    {media?.hasFile &&
+                        <Card color="secondary col-md-4 col-sm-6 mx-1">
+                            <CardBody>
+                                <CardTitle tag="h5">
+                                    Downloaded Movie Information
+                                </CardTitle>
+                                <Table responsive>
+                                    <thead>
+                                        <tr>
+                                            <th>Video Codec</th>
+                                            <th>Audio</th>
+                                            <th>Quality</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{media.movieFile?.mediaInfo.videoCodec}</td>
+                                            <td>{media.movieFile?.mediaInfo.audioCodec}</td>
+                                            <td>{media.movieFile?.quality.quality.name}</td>
+                                        </tr>
+                                    </tbody>
+                                </Table>
+                            </CardBody>
+                        </Card>}
+                </Container>
+            </Authenticate>
+        </Container>);
     }
     else {
-        setMediaState(movieMedia);
+        return (
+            <div>Loading...</div>
+        )
     }
-
-    setMovieRequestState(radarrLookup);
 }
 
 export async function getServerSideProps() {
