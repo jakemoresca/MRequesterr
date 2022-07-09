@@ -4,15 +4,15 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { SetterOrUpdater, useRecoilState } from 'recoil';
 import MediaCard from '../../components/mediacard';
 import { mediaState, MediaStateType, seriesRequestState } from '../../states/media';
-import { convertToMedia, getSeries } from '../api/tmdb';
-import { getSeries as getSonarrSeries, getSeriesLookup, requestSeries, updateRequestSeries } from '../api/series';
 import { ISettings } from '../../models/settings';
-import { getSettings } from '../api/settings';
 import { Card, CardBody, CardSubtitle, CardTitle, Container, Input, Label, Progress } from 'reactstrap';
 import { ISonarrSeries, Season } from '../../models/sonarrSeries';
 import { IMedia } from '../../models/media';
 import Authenticate from '../../components/authenticate';
 import Head from 'next/head';
+import { updateRequestSeries, requestSeries, getSeries as getSonarrSeries, getSeriesLookup } from '../../services/series';
+import { getSettings } from '../../services/settings';
+import { convertToMedia, getSeries } from '../../services/tmdb';
 
 export interface ITVProps {
     settings: ISettings;

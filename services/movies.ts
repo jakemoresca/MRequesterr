@@ -1,17 +1,9 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiResponse } from 'next'
-import { IMedia } from '../../models/media';
-import { IRadarrMovie, IRadarrQueue } from '../../models/radarrMovies';
-import { IMovieSettings, ISettings } from '../../models/settings'
-import { ISonarrRootFolder } from '../../models/sonarrSeries';
+import useSWR from 'swr';
+import { IMedia } from '../models/media';
+import { IRadarrMovie, IRadarrQueue } from '../models/radarrMovies';
+import { IMovieSettings, ISettings } from '../models/settings'
+import { ISonarrRootFolder } from '../models/sonarrSeries';
 import { getSettings } from './settings';
-
-export default async function handler(
-    res: NextApiResponse<IMedia[]>
-) {
-    const movies = await getMovies();
-    res.status(200).json(movies)
-}
 
 const API_BASE_URL = "/api/v3";
 
@@ -27,6 +19,31 @@ export async function getMovies(overrideSettings?: ISettings): Promise<IMedia[]>
     }
 
     return [];
+}
+
+export async function useMovies(overrideSettings?: ISettings) {
+    const settings = overrideSettings ?? await getSettings();
+    const getMovieUrl = getServiceUrl(settings.integrationSettings.movies, `${API_BASE_URL}/movie`);
+
+    const fetcher = (url: string): Promise<IMedia[]> => fetch(url).then(r => r.json())
+    const { data, error } = useSWR(() => getMovieUrl, fetcher)
+
+    return {
+        movies: data,
+        isMoviesLoading: !error && !data,
+        isError: error
+    }
+}
+
+export async function useAvailableMovies(overrideSettings?: ISettings) {
+    var { movies, isMoviesLoading, isError } = await useMovies(overrideSettings);
+    var availableMovies = (movies ?? []).filter(x => x.hasFile);
+
+    return {
+        movies: availableMovies,
+        isMoviesLoading: isMoviesLoading,
+        isError: isError
+    }
 }
 
 export async function getMovieLookup(overrideSettings?: ISettings, tmdbId?: number): Promise<IRadarrMovie> {

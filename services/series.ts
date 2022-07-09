@@ -1,16 +1,8 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiResponse } from 'next'
-import { IMedia } from '../../models/media';
-import { ISeriesSettings, ISettings } from '../../models/settings'
-import { ISonarrRootFolder, ISonarrSeries } from '../../models/sonarrSeries';
+import useSWR from 'swr';
+import { IMedia } from '../models/media';
+import { ISeriesSettings, ISettings } from '../models/settings'
+import { ISonarrRootFolder, ISonarrSeries } from '../models/sonarrSeries';
 import { getSettings } from './settings';
-
-export default async function handler(
-    res: NextApiResponse<IMedia[]>
-) {
-    const series = await getSeries();
-    res.status(200).json(series)
-}
 
 const API_BASE_URL = "/api/v3";
 
@@ -26,6 +18,31 @@ export async function getSeries(overrideSettings?: ISettings): Promise<IMedia[]>
     }
 
     return [];
+}
+
+export async function useSeries(overrideSettings?: ISettings) {
+    const settings = overrideSettings ?? await getSettings();
+    const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/series`);
+
+    const fetcher = (url: string): Promise<IMedia[]> => fetch(url).then(r => r.json())
+    const { data, error } = useSWR(() => getSeriesUrl, fetcher)
+
+    return {
+        series: data,
+        isSeriesLoading: !error && !data,
+        isError: error
+    }
+}
+
+export async function useAvailableSeries(overrideSettings?: ISettings) {
+    var { series, isSeriesLoading, isError } = await useSeries(overrideSettings);
+    var availableSeries = (series ?? []).filter(x => x.statistics.percentOfEpisodes == 100);
+
+    return {
+        series: availableSeries,
+        isSeriesLoading: isSeriesLoading,
+        isError: isError
+    }
 }
 
 export async function requestSeries(media: ISonarrSeries, overrideSettings?: ISettings): Promise<ISonarrSeries> {

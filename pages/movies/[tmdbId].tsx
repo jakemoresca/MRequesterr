@@ -4,14 +4,14 @@ import { useEffect } from 'react';
 import { SetterOrUpdater, useRecoilState } from 'recoil';
 import MediaCard from '../../components/mediacard';
 import { mediaState, MediaStateType, movieRequestState } from '../../states/media';
-import { convertToMedia, getMovie } from '../api/tmdb';
-import { getMovieLookup, getMovies as getRadarrMovies, getQueue, requestMovie } from '../api/movies';
 import { ISettings } from '../../models/settings';
-import { getSettings } from '../api/settings';
 import { Container, Card, CardBody, CardTitle, Progress, Table } from 'reactstrap';
 import { IRadarrMovie, RadarrQueueRecord } from '../../models/radarrMovies';
 import Authenticate from '../../components/authenticate';
 import Head from 'next/head';
+import { requestMovie, getQueue, getMovieLookup, getMovies as getRadarrMovies, } from '../../services/movies';
+import { getSettings } from '../../services/settings';
+import { getMovie, convertToMedia } from '../../services/tmdb';
 
 export interface IMovieProps {
     settings: ISettings;

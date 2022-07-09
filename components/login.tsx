@@ -3,7 +3,7 @@ import React, { ChangeEventHandler, FormEventHandler, useState } from "react";
 import { Button, Container, Form, FormGroup } from "reactstrap";
 import { SetterOrUpdater, useRecoilState } from "recoil";
 import { ISettings } from "../models/settings";
-import { login, plexLogin } from "../pages/api/user";
+import { plexLogin, login } from "../services/user";
 import { authState, IAuthState } from "../states/auth";
 
 export interface LoginState {

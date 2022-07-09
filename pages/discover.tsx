@@ -2,13 +2,13 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { IMedia } from '../models/media'
 import LazyCarousel from '../components/carousel'
-import { convertToMedia, getPopularMovies, getPopularSeries } from './api/tmdb'
 import { SetterOrUpdater, useRecoilState } from 'recoil'
 import { IPopularMoviesState, IPopularSeriesState, popularMoviesState, popularSeriesState } from '../states/discover'
 import { useEffect } from 'react'
 import Authenticate from '../components/authenticate'
 import { ISettings } from '../models/settings'
-import { getSettings } from './api/settings'
+import { getSettings } from '../services/settings'
+import { getPopularMovies, convertToMedia, getPopularSeries } from '../services/tmdb'
 
 export interface IHomeProps {
   settings: ISettings;

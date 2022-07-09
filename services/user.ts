@@ -1,16 +1,7 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiResponse } from 'next'
-import { IAuthSettings, ISettings } from '../../models/settings'
-import { IAuthState } from '../../states/auth';
+import { IAuthSettings, ISettings } from '../models/settings'
+import { IAuthState } from '../states/auth';
 import { getSettings } from './settings';
 import { PlexOauth, IPlexClientDetails } from "plex-oauth"
-
-export default async function handler(
-    res: NextApiResponse<ISettings>
-) {
-    const movies = await getSettings();
-    res.status(200).json(movies)
-}
 
 export async function login(username?: string, password?: string, overrideSettings?: ISettings): Promise<IAuthState> {
     const settings = overrideSettings ?? await getSettings();

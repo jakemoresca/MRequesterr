@@ -3,18 +3,18 @@ import { NextPage } from 'next/types';
 import { ChangeEventHandler, KeyboardEventHandler, useEffect, useState } from 'react';
 import { SetterOrUpdater, useRecoilState } from 'recoil';
 import MediaCard from '../../components/mediacard';
-import { convertSearchResultToMedia, searchTmdb } from '../api/tmdb';
 import { ISettings } from '../../models/settings';
-import { getSettings } from '../api/settings';
 import { Container, Input } from 'reactstrap';
 import { searchResultState } from '../../states/search';
 import { ITmdbSearchResult, MediaType } from '../../models/tmdbSearch';
 import { IMedia } from '../../models/media';
-import { getSeries } from '../api/series';
-import { getMovies } from '../api/movies';
 import Link from 'next/link';
 import Authenticate from '../../components/authenticate';
 import Head from 'next/head';
+import { getMovies } from '../../services/movies';
+import { getSeries } from '../../services/series';
+import { getSettings } from '../../services/settings';
+import { convertSearchResultToMedia, searchTmdb } from '../../services/tmdb';
 
 export interface ITVProps {
     settings: ISettings;

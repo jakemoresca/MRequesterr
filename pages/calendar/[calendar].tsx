@@ -3,10 +3,10 @@ import { GetStaticPaths, NextPage } from 'next/types';
 import { Container } from 'reactstrap';
 import Authenticate from '../../components/authenticate';
 import Head from 'next/head';
-import { getSettings } from '../api/settings';
-import { getServiceUrl as getSonarrServiceUrl } from '../api/series';
-import { getServiceUrl as getRadarrServiceUrl } from '../api/movies';
 import { ISettings } from '../../models/settings';
+import { getSettings } from '../../services/settings';
+import { getServiceUrl as getRadarrServiceUrl } from '../../services/movies';
+import { getServiceUrl as getSonarrServiceUrl } from '../../services/series';
 
 export interface ICalendarProps {
     sonarrCalendarUrl: string;

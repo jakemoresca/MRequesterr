@@ -1,17 +1,8 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiResponse } from 'next'
-import { IMedia } from '../../models/media';
-import { ITmdbMovie, ITmdbMovieResult } from '../../models/tmdbMovie';
-import { ITmdbSearch, ITmdbSearchResult } from '../../models/tmdbSearch';
+import { IMedia } from '../models/media';
+import { ITmdbMovie, ITmdbMovieResult } from '../models/tmdbMovie';
+import { ITmdbSearch, ITmdbSearchResult } from '../models/tmdbSearch';
 
 const apiKey = "31140dcf74785b0d8b68a678b8057587";
-
-export default async function handler(
-    res: NextApiResponse<ITmdbMovie>
-) {
-    const popularMovies = await getPopularMovies(1);
-    res.status(200).json(popularMovies)
-}
 
 export async function getPopularMovies(page?: number): Promise<ITmdbMovie> {
     const pageNumber = page ?? 1;
@@ -44,7 +35,7 @@ export async function getMovie(tmdbId: string): Promise<ITmdbMovieResult> {
         return result.json();
     }
 
-    throw new Error("Error retrieving Movie");
+    throw new Error("Error retrieving Series");
 }
 
 export async function getSeries(title: string): Promise<ITmdbMovieResult> {

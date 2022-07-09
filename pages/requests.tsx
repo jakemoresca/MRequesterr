@@ -2,11 +2,11 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { IMedia } from '../models/media'
 import { ISettings } from '../models/settings'
-import { getItemTypeAndUrl, getMovies } from './api/movies'
-import { getSeries } from './api/series'
-import { getSettings } from './api/settings'
 import LazyCarousel from '../components/carousel'
 import Authenticate from '../components/authenticate'
+import { getItemTypeAndUrl, getMovies } from '../services/movies'
+import { getSeries } from '../services/series'
+import { getSettings } from '../services/settings'
 
 export interface IRequestsProps {
   settings: ISettings;
