@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import React from 'react';
 import { RecoilRoot } from 'recoil';
 import { ISettings } from '../models/settings'
-import Discover from '../pages/discover';
+import Discover from '../pages/discoverMovie/[page]';
 
 jest.mock("../components/authenticate", () => (props) => {
   return (<mock-authenticate data-testid="authenticate">{props.children}</mock-authenticate>);

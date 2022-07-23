@@ -46,11 +46,23 @@ const NavMenu = () => {
                                 </NavLink>
                             </Link>
                         </NavItem>
-                        <NavItem>
-                            <Link passHref href="/discover">
-                                <NavLink>Discover</NavLink>
-                            </Link>
-                        </NavItem>
+                        <UncontrolledDropdown inNavbar nav>
+                            <DropdownToggle caret nav>
+                                Discover
+                            </DropdownToggle>
+                            <DropdownMenu end>
+                                <Link passHref href="/discoverMovie/1">
+                                    <DropdownItem >
+                                        Popular Movies
+                                    </DropdownItem>
+                                </Link>
+                                <Link passHref href="/discoverSeries/1">
+                                    <DropdownItem>
+                                        Popular Series
+                                    </DropdownItem>
+                                </Link>
+                            </DropdownMenu>
+                        </UncontrolledDropdown>
                         <NavItem>
                             <Link passHref href="/requests">
                                 <NavLink>Requests</NavLink>
