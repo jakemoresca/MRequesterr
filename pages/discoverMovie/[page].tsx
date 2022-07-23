@@ -16,22 +16,7 @@ const DiscoverMovies: NextPage<IHomeProps> = (props) => {
   const router = useRouter();
   const { page } = router.query;
 
-  // const [moviesState, setMovieState] = useRecoilState(popularMoviesState);
-  // const [seriesState, setSeriesState] = useRecoilState(popularSeriesState);
-
   const { movies, isMoviesLoading } = usePopularMovies(parseInt(page as string));
-  //const { series, isSeriesLoading } = usePopularSeries(1);
-
-  // useEffect(() => {
-  //   fetchData(setMovieState, setSeriesState);
-  // })
-
-  // const getItemTypeAndUrlSeries = (media: IMedia) => {
-  //   const url = media.images[0].url;
-  //   const itemType = "series";
-
-  //   return { url, itemType };
-  // }
 
   const getItemTypeAndUrlMovie = (media: IMedia) => {
     const url = media.images[0].url;
@@ -40,40 +25,15 @@ const DiscoverMovies: NextPage<IHomeProps> = (props) => {
     return { url, itemType };
   }
 
-  // const itemsPerPage = 20;
-  // const itemsDisplayedPerPage = 6;
-  // const loadedPage = (itemsPerPage * moviesState.currentPage);
-
   const handleNextMovie = async (page: number) => {
-    router.push(`/discoverMovie/${page}`);
-    // const needLoad = (loadedPage - (page * itemsDisplayedPerPage) - itemsDisplayedPerPage) < 0
-
-    // if (needLoad) {
-    //   const nextPage = moviesState.currentPage + 1;
-    //   const popularMovies = await getPopularMovies(nextPage);
-    //   const movies = popularMovies.results.map(convertToMedia);
-
-    //   const newMovies = moviesState.movies.concat(movies);
-
-    //   setMovieState({ movies: newMovies, currentPage: nextPage });
-    // }
+    router.push(`/discoverMovie/${page + 1}`);
   }
 
-  // const handleNextSeries = async (page: number) => {
-  //   const needLoad = (loadedPage - (page * itemsDisplayedPerPage) - itemsDisplayedPerPage) < 0
+  const handlePrevMovie = async (page: number) => {
+    router.push(`/discoverMovie/${page + 1}`);
+  }
 
-  //   if (needLoad) {
-  //     const nextPage = seriesState.currentPage + 1;
-  //     const popularMovies = await getPopularSeries(nextPage);
-  //     const series = popularMovies.results.map(convertToMedia);
-
-  //     const newSeries = seriesState.series.concat(series);
-
-  //     setSeriesState({ series: newSeries, currentPage: nextPage });
-  //   }
-  // }
-
-  if(!isMoviesLoading)
+  if(isMoviesLoading)
   {
     return <></>
   }
@@ -87,25 +47,14 @@ const DiscoverMovies: NextPage<IHomeProps> = (props) => {
       </Head>
       <div className="container-fluid">
         <Authenticate settings={props.settings}>
-          <LazyCarousel items={convertedMovies} handleNext={handleNextMovie} getItemTypeAndUrl={getItemTypeAndUrlMovie} title="Movies" />
-          {/* <hr />
-          <LazyCarousel items={seriesState.series} handleNext={handleNextSeries} getItemTypeAndUrl={getItemTypeAndUrlSeries} title="Series" /> */}
+          <LazyCarousel items={convertedMovies} handleNext={handleNextMovie} handlePrev={handlePrevMovie} 
+            getItemTypeAndUrl={getItemTypeAndUrlMovie} title="Discover Popular Movies" maxPage={10} 
+            currentPage={parseInt(page as string) - 1} serverSide={true} />
         </Authenticate>
       </div>
     </div>
   )
 }
-
-// async function fetchData(setMovieState: SetterOrUpdater<IPopularMoviesState>, setSeriesState: SetterOrUpdater<IPopularSeriesState>) {
-//   const popularMovies = await getPopularMovies(1);
-//   const popularSeries = await getPopularSeries(1);
-
-//   const movies = popularMovies.results.map(convertToMedia);
-//   const series = popularSeries.results.map(convertToMedia);
-
-//   setSeriesState({ series, currentPage: popularSeries.page });
-//   setMovieState({ movies, currentPage: popularMovies.page });
-// }
 
 export async function getServerSideProps() {
   const settings = await getSettings();

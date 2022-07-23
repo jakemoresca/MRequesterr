@@ -14,6 +14,9 @@ export interface ICarouselProps {
     handlePrev?: (page: number) => void;
     showProgress?: boolean;
     title?: string;
+    maxPage?: number;
+    currentPage?: number;
+    serverSide?: boolean;
 }
 
 export interface ICarouselState {
@@ -22,12 +25,12 @@ export interface ICarouselState {
 
 const LazyCarousel: NextPage<ICarouselProps> = (props) => {
 
-    const [state, setState] = React.useState<ICarouselState>({ currentPage: 0 });
+    const [state, setState] = React.useState<ICarouselState>({ currentPage: props.currentPage ?? 0 });
 
     const itemsPerPage = 24;
-    const maxPage = Math.ceil(props.items.length > 0 ? props.items.length / itemsPerPage : 0);
+    const maxPage = props.maxPage ?? Math.ceil(props.items.length > 0 ? props.items.length / itemsPerPage : 0);
 
-    const currentItems = props.items.filter((item, index) => {
+    const currentItems = props.serverSide ? props.items : props.items.filter((item, index) => {
         if(index >= state.currentPage * itemsPerPage && index < (state.currentPage + 1) * itemsPerPage)
             return item;
         else
@@ -52,6 +55,8 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
             setState({ currentPage: 0 });
         else
             setState({ currentPage: nextPage });
+
+        props.handlePrev && props.handlePrev(nextPage);
     }
 
     const cards = currentItems.map((x, index) => {
