@@ -1,4 +1,4 @@
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { IMedia } from '../models/media';
 import { IRadarrMovie, IRadarrQueue } from '../models/radarrMovies';
 import { IMovieSettings, ISettings } from '../models/settings'
@@ -26,7 +26,7 @@ export function useMovies(overrideSettings: ISettings) {
     const getMovieUrl = getServiceUrl(settings.integrationSettings.movies, `${API_BASE_URL}/movie`);
 
     const fetcher = (url: string): Promise<IMedia[]> => fetch(url).then(r => r.json())
-    const { data, error } = useSWR(() => getMovieUrl, fetcher)
+    const { data, error } = useSWR(getMovieUrl, fetcher)
 
     return {
         movies: data,
@@ -100,6 +100,10 @@ export async function requestMovie(media: IRadarrMovie, overrideSettings?: ISett
     });
 
     if (result.ok) {
+        // tell all SWRs with this key to revalidate
+        const getMovieUrl = getServiceUrl(settings.integrationSettings.movies, `${API_BASE_URL}/movie`);
+        mutate(getMovieUrl);
+
         return result.json();
     }
 

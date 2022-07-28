@@ -1,25 +1,22 @@
 import { useRouter } from 'next/router'
-import { NextPage } from 'next/types';
-import { useEffect } from 'react';
-import { SetterOrUpdater, useRecoilState } from 'recoil';
 import MediaCard from '../../components/mediacard';
-import { mediaState, MediaStateType, movieRequestState } from '../../states/media';
+import { MediaStateType } from '../../states/media';
 import { ISettings } from '../../models/settings';
 import { Container, Card, CardBody, CardTitle, Progress, Table } from 'reactstrap';
-import { IRadarrMovie, RadarrQueueRecord } from '../../models/radarrMovies';
+import { RadarrQueueRecord } from '../../models/radarrMovies';
 import Authenticate from '../../components/authenticate';
 import Head from 'next/head';
-import { requestMovie, getQueue, getMovieLookup, getMovies as getRadarrMovies, useMovies, useRadarrQueue, useMovieLookup, } from '../../services/movies';
+import { requestMovie, useMovies, useRadarrQueue, useMovieLookup, } from '../../services/movies';
 import { getSettings } from '../../services/settings';
-import { getMovie, convertToMedia, useTmdbMovie } from '../../services/tmdb';
+import { convertToMedia, useTmdbMovie } from '../../services/tmdb';
 
 export interface IMovieProps {
     settings: ISettings;
 }
 
 function Movie(props: IMovieProps) {
-    const [media, setMediaState] = useRecoilState(mediaState);
-    const [movieRequest, setMovieRequestState] = useRecoilState(movieRequestState);
+    //const [media, setMediaState] = useRecoilState(mediaState);
+    //const [movieRequest, setMovieRequestState] = useRecoilState(movieRequestState);
 
     const router = useRouter();
     const { tmdbId } = router.query;
@@ -62,8 +59,7 @@ function Movie(props: IMovieProps) {
 
         const handleRequest = async () => {
             if (movieLookup != undefined) {
-                await requestMovie(movieRequest, props.settings);
-                //setMovieRequestState(movieResult);
+                await requestMovie(movieLookup, props.settings);
             }
         };
 

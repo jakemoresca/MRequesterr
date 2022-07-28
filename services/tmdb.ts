@@ -5,21 +5,12 @@ import { ITmdbSearch, ITmdbSearchResult } from '../models/tmdbSearch';
 
 const apiKey = "31140dcf74785b0d8b68a678b8057587";
 
-export function getPopularMovies(page?: number) {
+export function usePopularMovies(page?: number) {
     const pageNumber = page ?? 1;
-
-    // const result = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=${pageNumber}`);
-
-    // if (result.ok) {
-    //     return result.json();
-    // }
-
-    // throw new Error("Error retrieving Popular Movies");
-
     const getPopularMovieUrl = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=${pageNumber}`;
 
     const fetcher = (url: string): Promise<ITmdbMovie> => fetch(url).then(r => r.json())
-    const { data, error } = useSWR(() => getPopularMovieUrl, fetcher)
+    const { data, error } = useSWR(getPopularMovieUrl, fetcher)
 
     return {
         movies: data,
@@ -28,47 +19,18 @@ export function getPopularMovies(page?: number) {
     }
 }
 
-export function usePopularMovies(page?: number) {
-  var { movies, isMoviesLoading, isError } = getPopularMovies(page);
-
-  return {
-      movies: movies,
-      isMoviesLoading: isMoviesLoading,
-      isError: isError
-  }
-}
-
-export function getPopularSeries(page?: number) {
+export function usePopularSeries(page?: number) {
     const pageNumber = page ?? 1;
-
-    // const result = await fetch(`https://api.themoviedb.org/3/tv/popular?api_key=${apiKey}&language=en-US&page=${pageNumber}`);
-
-    // if (result.ok) {
-    //     return result.json();
-    // }
-
-    // throw new Error("Error retrieving Popular Series");
-
     const getPopularSeriesUrl = `https://api.themoviedb.org/3/tv/popular?api_key=${apiKey}&language=en-US&page=${pageNumber}`;
 
     const fetcher = (url: string): Promise<ITmdbMovie> => fetch(url).then(r => r.json())
-    const { data, error } = useSWR(() => getPopularSeriesUrl, fetcher)
+    const { data, error } = useSWR(getPopularSeriesUrl, fetcher)
 
     return {
         series: data,
         isSeriesLoading: !error && !data,
         isError: error
     }
-}
-
-export function usePopularSeries(page?: number) {
-  var { series, isSeriesLoading, isError } = getPopularSeries(page);
-
-  return {
-    series: series,
-    isSeriesLoading: isSeriesLoading,
-      isError: isError
-  }
 }
 
 export async function getMovie(tmdbId: string): Promise<ITmdbMovieResult> {
@@ -85,7 +47,7 @@ export function useTmdbMovie(tmdbId: string) {
   const getMovieUrl = `https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${apiKey}&language=en-US`;
 
   const fetcher = (url: string): Promise<ITmdbMovieResult> => fetch(url).then(r => r.json())
-  const { data, error } = useSWR(() => getMovieUrl, fetcher)
+  const { data, error } = useSWR(getMovieUrl, fetcher)
 
   return {
       tmdbMovie: data,
