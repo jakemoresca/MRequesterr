@@ -77,7 +77,7 @@ const TV: NextPage<ITVProps> = (props) => {
             setIsDirty(false);
         }
 
-        const progress = Math.ceil(media?.statistics.percentOfEpisodes ?? 0);
+        const progress = Math.ceil(media?.statistics?.percentOfEpisodes ?? 0);
 
         return (<Box>
             <Head><title>View TV</title></Head>

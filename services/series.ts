@@ -60,8 +60,8 @@ export async function requestSeries(media: ISonarrSeries, overrideSettings?: ISe
         apikey,
         addOptions: {
             monitor: "all",
-            searchForCutoffUnmetEpisodes: false,
-            searchForMissingEpisodes: false
+            searchForCutoffUnmetEpisodes: true,
+            searchForMissingEpisodes: true
         }
     }
 
@@ -99,6 +99,11 @@ export async function updateRequestSeries(media: ISonarrSeries, overrideSettings
     const seriesRequestBody: ISonarrSeries = {
         ...sonarrSeries,
         apikey,
+        addOptions: {
+            monitor: "all",
+            searchForCutoffUnmetEpisodes: true,
+            searchForMissingEpisodes: true
+        },
         seasons: media.seasons.map(season => {
             var origSeason = sonarrSeries.seasons.find(x => x.seasonNumber == season.seasonNumber) ?? season;
             return {...season, statistics: {...origSeason.statistics }}
