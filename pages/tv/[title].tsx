@@ -29,8 +29,15 @@ const TV: NextPage<ITVProps> = (props) => {
     const [isDirty, setIsDirty] = useState<boolean>(false);
 
     if (tmdbSeries != undefined && series != undefined && seriesLookup != undefined) {
+        console.log("before convertToMedia")
+
         const seriesMedia = convertToMedia(tmdbSeries);
+
+        console.log("done convertToMedia")
+
         const sonarrSeriesMedia = containsYear(title as string) ? series.find(x => findWithYear(x, title as string)) : series.find(x => x.title == tmdbSeries.name);
+
+        console.log("done sonarrSeriesMedia")
 
         let media: MediaStateType;
 

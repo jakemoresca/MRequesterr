@@ -101,6 +101,8 @@ export function convertToMedia(tmdbMovie: ITmdbMovieResult): IMedia
 {
   const title = tmdbMovie.title || tmdbMovie.name || "NO TITLE";
 
+  console.log(tmdbMovie);
+
   return {
     ...tmdbMovie,
     id: tmdbMovie.id.toString(),
