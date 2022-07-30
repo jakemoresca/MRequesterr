@@ -1,4 +1,4 @@
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { IMedia } from '../models/media';
 import { ISeriesSettings, ISettings } from '../models/settings'
 import { ISonarrRootFolder, ISonarrSeries } from '../models/sonarrSeries';
@@ -25,7 +25,7 @@ export function useSeries(overrideSettings: ISettings) {
     const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/series`);
 
     const fetcher = (url: string): Promise<IMedia[]> => fetch(url).then(r => r.json())
-    const { data, error } = useSWR(() => getSeriesUrl, fetcher)
+    const { data, error } = useSWR(getSeriesUrl, fetcher)
 
     return {
         series: data,
@@ -77,6 +77,10 @@ export async function requestSeries(media: ISonarrSeries, overrideSettings?: ISe
     });
 
     if (result.ok) {
+        // tell all SWRs with this key to revalidate
+        const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/series`);
+        mutate(getSeriesUrl);
+
         return result.json();
     }
 
@@ -111,6 +115,10 @@ export async function updateRequestSeries(media: ISonarrSeries, overrideSettings
     });
 
     if (result.ok) {
+        // tell all SWRs with this key to revalidate
+        const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/series`);
+        mutate(getSeriesUrl);
+
         return result.json();
     }
 
@@ -132,6 +140,20 @@ export async function getSeriesLookup(overrideSettings?: ISettings, title?: stri
     throw new Error("Error retrieving Series");
 }
 
+export function useSeriesLookup(overrideSettings: ISettings, title?: string) {
+    const settings = overrideSettings;
+    const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/series/lookup`, `&term=${title}`);
+
+    const fetcher = (url: string): Promise<ISonarrSeries> => fetch(url).then(r => r.json())
+    const { data, error } = useSWR(getSeriesUrl, fetcher)
+
+    return {
+        seriesLookup: data,
+        isSeriesLookupLoading: !error && !data,
+        isError: error
+    }
+}
+
 export async function getRootFolder(overrideSettings?: ISettings): Promise<ISonarrRootFolder[]> {
     const settings = overrideSettings ?? await getSettings();
 
@@ -145,6 +167,20 @@ export async function getRootFolder(overrideSettings?: ISettings): Promise<ISona
     }
 
     throw new Error("Error retrieving Series Folder");
+}
+
+export function useRootFolder(overrideSettings: ISettings) {
+    const settings = overrideSettings;
+    const getRootFolderUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/rootfolder`);
+
+    const fetcher = (url: string): Promise<ISonarrRootFolder[]> => fetch(url).then(r => r.json())
+    const { data, error } = useSWR(getRootFolderUrl, fetcher)
+
+    return {
+        rootFolders: data,
+        rootFoldersLoading: !error && !data,
+        isError: error
+    }
 }
 
 export const getServiceUrl = (seriesSettings: ISeriesSettings, relativeServiceUrl: string, queryString?: string) => {

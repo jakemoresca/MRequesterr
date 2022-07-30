@@ -1,128 +1,130 @@
 import { useRouter } from 'next/router'
 import { NextPage } from 'next/types';
-import { ChangeEvent, useEffect, useState } from 'react';
-import { SetterOrUpdater, useRecoilState } from 'recoil';
+import { ChangeEvent, useState } from 'react';
 import MediaCard from '../../components/mediacard';
-import { mediaState, MediaStateType, seriesRequestState } from '../../states/media';
+import { MediaStateType } from '../../states/media';
 import { ISettings } from '../../models/settings';
 import { Card, CardBody, CardSubtitle, CardTitle, Container, Input, Label, Progress } from 'reactstrap';
-import { ISonarrSeries, Season } from '../../models/sonarrSeries';
+import { Season } from '../../models/sonarrSeries';
 import { IMedia } from '../../models/media';
 import Authenticate from '../../components/authenticate';
 import Head from 'next/head';
-import { updateRequestSeries, requestSeries, getSeries as getSonarrSeries, getSeriesLookup } from '../../services/series';
+import { updateRequestSeries, requestSeries, useSeries, useSeriesLookup } from '../../services/series';
 import { getSettings } from '../../services/settings';
-import { convertToMedia, getSeries } from '../../services/tmdb';
+import { convertToMedia, useTmdbSeries } from '../../services/tmdb';
 
 export interface ITVProps {
     settings: ISettings;
 }
 
 const TV: NextPage<ITVProps> = (props) => {
-    const [media, setMediaState] = useRecoilState(mediaState);
-    const [seriesRequest, setSeriesRequestState] = useRecoilState(seriesRequestState);
-    const [seasons, setSeasons] = useState<Season[]>([]);
-    const [isDirty, setIsDirty] = useState<boolean>(false);
-
     const router = useRouter();
     const { title } = router.query;
 
-    useEffect(() => {
-        fetchData(title as string, setMediaState, setSeriesRequestState, props.settings);
-    }, [title])
+    const { tmdbSeries } = useTmdbSeries(title as string);
+    const { series } = useSeries(props.settings);
+    const { seriesLookup } = useSeriesLookup(props.settings, title as string)
 
-    useEffect(() => {
-        if (seriesRequest) {
-            setSeasons(seriesRequest.seasons);
+    const [seasons, setSeasons] = useState<Season[]>([]);
+    const [isDirty, setIsDirty] = useState<boolean>(false);
+
+    if (tmdbSeries != undefined && series != undefined) {
+        const seriesMedia = convertToMedia(tmdbSeries);
+        const sonarrSeriesMedia = containsYear(title as string) ? series.find(x => findWithYear(x, title as string)) : series.find(x => x.title == tmdbSeries.name);
+
+        let media: MediaStateType;
+
+        if (sonarrSeriesMedia) {
+            media = { ...seriesMedia, isAvailable: true, additionalInfo: seriesLookup, statistics: sonarrSeriesMedia.statistics }
         }
-    }, [seriesRequest])
+        else {
+            media = { ...seriesMedia, additionalInfo: seriesLookup };
+        }
 
-    const handleCheck = (event: ChangeEvent<HTMLInputElement>, seasonNumber: number) => {
-        const newSeasonState = [...seasons.map(season => {
-            if (season.seasonNumber == seasonNumber) {
-                return { ...season, monitored: event.currentTarget.checked };
+        if(seriesLookup) {
+            setSeasons(seriesLookup.seasons)
+        }
+
+        const handleCheck = (event: ChangeEvent<HTMLInputElement>, seasonNumber: number) => {
+            const newSeasonState = [...seasons.map(season => {
+                if (season.seasonNumber == seasonNumber) {
+                    return { ...season, monitored: event.currentTarget.checked };
+                }
+    
+                return { ...season }
+            })];
+    
+            setSeasons(newSeasonState);
+            setIsDirty(true);
+        }
+    
+        const handleRequest = async () => {
+            if(!seriesLookup)
+                return;
+
+            const newSeriesState = {...seriesLookup, seasons: [...seasons]}
+            
+            if(media?.isAvailable) {
+                await updateRequestSeries(newSeriesState, props.settings)
+            }
+            else {
+                await requestSeries(newSeriesState, props.settings);
             }
 
-            return { ...season }
-        })];
-
-        setSeasons(newSeasonState);
-        setIsDirty(true);
+            setIsDirty(false);
+        }
+    
+        const progress = Math.ceil(media?.statistics.percentOfEpisodes ?? 0);
+    
+        return (<Container fluid>
+            <Head><title>View TV</title></Head>
+            <Authenticate settings={props.settings}>
+                <MediaCard media={media} handleRequest={handleRequest} isDirty={isDirty} />
+                <br />
+                <Container fluid className='d-flex flex-row'>
+                    <Card color="secondary col-md-4 col-sm-6 mx-1">
+                        <CardBody>
+                            <CardTitle tag="h5">
+                                Season Information
+                            </CardTitle>
+                            <CardSubtitle>
+                                Please select the season to monitor and download:
+                            </CardSubtitle>
+                            {
+                                seasons && seasons.map((season, x) => {
+                                    const currentValue = seriesLookup?.seasons.find(y => y.seasonNumber == season.seasonNumber);
+    
+                                    return (
+                                        <div key={x}>
+                                            <Input type="checkbox" checked={season.monitored}
+                                                onChange={(event) => handleCheck(event, season.seasonNumber)}
+                                                disabled={currentValue?.monitored} />
+                                            <Label check>
+                                                {season.seasonNumber == 0 ? ' Specials' : ` Season ${season.seasonNumber}`}
+                                            </Label>
+                                        </div>
+                                    );
+                                })
+                            }
+                        </CardBody>
+                    </Card>
+                    <Card color="secondary col-md-4 col-sm-6 mx-1">
+                        <CardBody>
+                            <CardTitle tag="h5">
+                                Request Progress
+                            </CardTitle>
+                            <Progress className="col-md-9 bg-dark" value={progress} />
+                            {`${progress} / 100`}
+                        </CardBody>
+                    </Card>
+                </Container>
+            </Authenticate>
+        </Container>);
     }
 
-    const handleRequest = async () => {
-        const newSeriesState = {...seriesRequest, seasons: [...seasons]}
-        const seriesResult = media?.isAvailable ? await updateRequestSeries(newSeriesState, props.settings) : 
-            await requestSeries(newSeriesState, props.settings);
-
-        setSeriesRequestState(seriesResult);
-        setIsDirty(false);
-    }
-
-    const progress = Math.ceil(media?.statistics.percentOfEpisodes ?? 0);
-
-    return (<Container fluid>
-        <Head><title>View TV</title></Head>
-        <Authenticate settings={props.settings}>
-            <MediaCard media={media} handleRequest={handleRequest} isDirty={isDirty} />
-            <br />
-            <Container fluid className='d-flex flex-row'>
-                <Card color="secondary col-md-4 col-sm-6 mx-1">
-                    <CardBody>
-                        <CardTitle tag="h5">
-                            Season Information
-                        </CardTitle>
-                        <CardSubtitle>
-                            Please select the season to monitor and download:
-                        </CardSubtitle>
-                        {
-                            seasons && seasons.map((season, x) => {
-                                const currentValue = seriesRequest.seasons.find(y => y.seasonNumber == season.seasonNumber);
-
-                                return (
-                                    <div key={x}>
-                                        <Input type="checkbox" checked={season.monitored}
-                                            onChange={(event) => handleCheck(event, season.seasonNumber)}
-                                            disabled={currentValue?.monitored} />
-                                        <Label check>
-                                            {season.seasonNumber == 0 ? ' Specials' : ` Season ${season.seasonNumber}`}
-                                        </Label>
-                                    </div>
-                                );
-                            })
-                        }
-                    </CardBody>
-                </Card>
-                <Card color="secondary col-md-4 col-sm-6 mx-1">
-                    <CardBody>
-                        <CardTitle tag="h5">
-                            Request Progress
-                        </CardTitle>
-                        <Progress className="col-md-9 bg-dark" value={progress} />
-                        {`${progress} / 100`}
-                    </CardBody>
-                </Card>
-            </Container>
-        </Authenticate>
-    </Container>);
-}
-
-async function fetchData(title: string, setMediaState: SetterOrUpdater<MediaStateType>, setSeriesRequestState: SetterOrUpdater<ISonarrSeries>, settings: ISettings) {
-    const series = await getSeries(title);
-    const sonarrSeries = await getSonarrSeries(settings);
-    const sonarrLookup = await getSeriesLookup(settings, title);
-
-    const seriesMedia = convertToMedia(series);
-    const sonarrSeriesMedia = containsYear(title) ? sonarrSeries.find(x => findWithYear(x, title)) : sonarrSeries.find(x => x.title == series.name);
-
-    if (sonarrSeriesMedia) {
-        setMediaState({ ...seriesMedia, isAvailable: true, additionalInfo: sonarrLookup, statistics: sonarrSeriesMedia.statistics });
-    }
-    else {
-        setMediaState({ ...seriesMedia, additionalInfo: sonarrLookup });
-    }
-
-    setSeriesRequestState(sonarrLookup);
+    return (
+        <div>Loading...</div>
+    )
 }
 
 function containsYear(title: string) {

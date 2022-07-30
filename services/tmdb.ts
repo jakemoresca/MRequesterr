@@ -68,6 +68,19 @@ export async function getSeries(title: string): Promise<ITmdbMovieResult> {
     throw new Error("Error retrieving Series");
 }
 
+export function useTmdbSeries(title: string) {
+  const getSeriesUrl = `https://api.themoviedb.org/3/search/tv?query=${title}&api_key=${apiKey}&language=en-US`;
+
+  const fetcher = (url: string): Promise<ITmdbMovieResult> => fetch(url).then(r => r.json())
+  const { data, error } = useSWR(getSeriesUrl, fetcher)
+
+  return {
+      tmdbSeries: data,
+      isTmdbSeriesLoading: !error && !data,
+      isError: error
+  }
+}
+
 export async function searchTmdb(query: string): Promise<ITmdbSearchResult[]> {
     const result = await fetch(`https://api.themoviedb.org/3/search/multi?query=${query}&api_key=${apiKey}&language=en-US`);
 

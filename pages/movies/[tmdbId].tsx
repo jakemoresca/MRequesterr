@@ -15,9 +15,6 @@ export interface IMovieProps {
 }
 
 function Movie(props: IMovieProps) {
-    //const [media, setMediaState] = useRecoilState(mediaState);
-    //const [movieRequest, setMovieRequestState] = useRecoilState(movieRequestState);
-
     const router = useRouter();
     const { tmdbId } = router.query;
 
