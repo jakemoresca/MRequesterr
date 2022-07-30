@@ -1,12 +1,12 @@
 import { useRouter } from 'next/router'
 import { GetStaticPaths, NextPage } from 'next/types';
-import { Container } from 'reactstrap';
 import Authenticate from '../../components/authenticate';
 import Head from 'next/head';
 import { ISettings } from '../../models/settings';
 import { getSettings } from '../../services/settings';
 import { getServiceUrl as getRadarrServiceUrl } from '../../services/movies';
 import { getServiceUrl as getSonarrServiceUrl } from '../../services/series';
+import { Box } from '@mui/material';
 
 export interface ICalendarProps {
     sonarrCalendarUrl: string;
@@ -23,14 +23,14 @@ const Calendar: NextPage<ICalendarProps> = (props) => {
         (<iframe className='w-100' style={{ height: "80vh" }} src={`${icsBaseUrl}${props.radarrCalendarUrl}`} title="Movie Calendar"></iframe>) :
         (<iframe className='w-100' style={{ height: "80vh" }} src={`${icsBaseUrl}${props.sonarrCalendarUrl}`} title="Series Calendar"></iframe>);
 
-    return (<Container fluid className="py-3">
+    return (<Box>
         <Head>
             <title>View Release Calendar</title>
         </Head>
         <Authenticate settings={props.settings}>
             {calendarComponent}
         </Authenticate>
-    </Container>);
+    </Box>);
 }
 
 export const getStaticPaths: GetStaticPaths<{ calendar: string }> = async () => {
