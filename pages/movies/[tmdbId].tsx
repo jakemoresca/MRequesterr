@@ -2,13 +2,14 @@ import { useRouter } from 'next/router'
 import MediaCard from '../../components/mediacard';
 import { MediaStateType } from '../../states/media';
 import { ISettings } from '../../models/settings';
-import { Container, Card, CardBody, CardTitle, Progress, Table } from 'reactstrap';
+//import { Container, Card, CardBody, CardTitle, Progress, Table } from 'reactstrap';
 import { RadarrQueueRecord } from '../../models/radarrMovies';
 import Authenticate from '../../components/authenticate';
 import Head from 'next/head';
 import { requestMovie, useMovies, useRadarrQueue, useMovieLookup, } from '../../services/movies';
 import { getSettings } from '../../services/settings';
 import { convertToMedia, useTmdbMovie } from '../../services/tmdb';
+import { Box, Card, CardContent, Grid, LinearProgress, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 
 export interface IMovieProps {
     settings: ISettings;
@@ -49,7 +50,7 @@ function Movie(props: IMovieProps) {
         const inQueue = progressValue.toString() != 'NaN';
         const progress = inQueue ? (
             <>
-                <Progress className="col-md-9 bg-primary" value={progressValue} />
+                <LinearProgress value={progressValue} />
                 {`${progressValue} / 100`}
             </>
         ) : <>Movie is not in download queue</>;
@@ -60,50 +61,59 @@ function Movie(props: IMovieProps) {
             }
         };
 
-        return (<Container fluid className="py-3">
+        return (<Box>
             <Head>
                 <title>View Movie</title>
             </Head>
             <Authenticate settings={props.settings}>
-                <MediaCard media={media} handleRequest={handleRequest} />
-                <br />
-                <Container fluid className='d-flex flex-row'>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <MediaCard media={media} handleRequest={handleRequest} />
+                    </Grid>
+
                     {media?.isAvailable && !media.hasFile &&
-                        <Card color="secondary col-md-4 col-sm-6 mx-1">
-                            <CardBody>
-                                <CardTitle tag="h5">
-                                    Request Progress
-                                </CardTitle>
-                                {progress}
-                            </CardBody>
-                        </Card>}
+                        <Grid item md={2} xs={6}>
+                            <Card variant="outlined">
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" component="div">
+                                        Request Progress
+                                    </Typography>
+                                    {progress}
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    }
+
                     {media?.hasFile &&
-                        <Card color="secondary col-md-4 col-sm-6 mx-1">
-                            <CardBody>
-                                <CardTitle tag="h5">
-                                    Downloaded Movie Information
-                                </CardTitle>
-                                <Table responsive>
-                                    <thead>
-                                        <tr>
-                                            <th>Video Codec</th>
-                                            <th>Audio</th>
-                                            <th>Quality</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>{media.movieFile?.mediaInfo.videoCodec}</td>
-                                            <td>{media.movieFile?.mediaInfo.audioCodec}</td>
-                                            <td>{media.movieFile?.quality.quality.name}</td>
-                                        </tr>
-                                    </tbody>
-                                </Table>
-                            </CardBody>
-                        </Card>}
-                </Container>
+                        <Grid item md={2} xs={6}>
+                            <Card variant="outlined">
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" component="div">
+                                        Downloaded Movie Information
+                                    </Typography>
+                                    <TableContainer>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Video Codec</TableCell>
+                                                <TableCell>Audio</TableCell>
+                                                <TableCell>Quality</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            <TableRow>
+                                                <TableCell>{media.movieFile?.mediaInfo.videoCodec}</TableCell>
+                                                <TableCell>{media.movieFile?.mediaInfo.audioCodec}</TableCell>
+                                                <TableCell>{media.movieFile?.quality.quality.name}</TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </TableContainer>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    }
+                </Grid>
             </Authenticate>
-        </Container>);
+        </Box>);
     }
     else {
         return (

@@ -1,9 +1,9 @@
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Box, Button, ButtonGroup, Grid, Typography, Link as MUILink } from "@mui/material";
 import Link from "next/link";
 import { NextPage } from "next/types";
 import React from "react";
-import { Button, Container } from "reactstrap";
 import { IMedia } from "../models/media";
 import Card from "./card";
 
@@ -17,6 +17,7 @@ export interface ICarouselProps {
     maxPage?: number;
     currentPage?: number;
     serverSide?: boolean;
+    isLoading?: boolean;
 }
 
 export interface ICarouselState {
@@ -31,7 +32,7 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
     const maxPage = props.maxPage ?? Math.ceil(props.items.length > 0 ? props.items.length / itemsPerPage : 0);
 
     const currentItems = props.serverSide ? props.items : props.items.filter((item, index) => {
-        if(index >= state.currentPage * itemsPerPage && index < (state.currentPage + 1) * itemsPerPage)
+        if (index >= state.currentPage * itemsPerPage && index < (state.currentPage + 1) * itemsPerPage)
             return item;
         else
             return null;
@@ -64,31 +65,40 @@ const LazyCarousel: NextPage<ICarouselProps> = (props) => {
         const isMovie = itemType == "movie";
         const linkHref = isMovie ? `/movies/${x.tmdbId ?? ""}` : `/tv/${x.title}`;
 
-        return (<Link key={`card_${index}`} href={linkHref} passHref>
-            <a className="col-6 col-lg-1">
-        <Card key={index} {...x} imageUrl={url} itemType={itemType} showProgress={props.showProgress} />
-        </a></Link>);
+        return (<Grid item xs={6} md={2} key={`card_${index}`}>
+            <Link href={linkHref} passHref>
+                <MUILink sx={{textDecoration: "none"}}>
+                    <Card key={index} {...x} imageUrl={url} itemType={itemType} showProgress={props.showProgress} />
+                </MUILink></Link></Grid>
+        );
     });
 
     if (cards.length == 0)
         return (<></>)
 
-    return (<div className="carousel slide d-flex flex-column">
-        <Container className="py-3" fluid>
-            <h3 className="float-start">{props.title}</h3>
-            <Button onClick={handleNext} className="float-end" disabled={state.currentPage == maxPage - 1}>
-                Next <FontAwesomeIcon icon={faAngleRight} />
-            </Button>
-            <Button onClick={handlePrev} className="float-end" disabled={state.currentPage == 0}>
-                <FontAwesomeIcon icon={faAngleLeft} /> Prev
-            </Button>
-        </Container>
-        <div className="carousel-inner">
-            <div className="carousel-item active d-flex row row-cols-sm-2 row-cols-md-6 row-cols-lg-12">
-                {cards}
-            </div>
-        </div>
-    </div>);
+    return (<Box>
+        <Grid container spacing={2}>
+            <Grid item xs={6} lg={10}>
+                <Typography gutterBottom variant="h3" component="div">
+                    {props.title}
+                </Typography>
+            </Grid>
+            <Grid item xs={6} lg={2}>
+                <ButtonGroup variant="contained" aria-label="outlined primary button group" sx={{ alignItems: 'flex-end' }}>
+                    <Button onClick={handlePrev} disabled={state.currentPage == 0}>
+                        <FontAwesomeIcon icon={faAngleLeft} /> Prev
+                    </Button>
+                    <Button onClick={handleNext} disabled={state.currentPage == maxPage - 1}>
+                        Next <FontAwesomeIcon icon={faAngleRight} />
+                    </Button>
+                </ButtonGroup>
+            </Grid>
+        </Grid>
+
+        <Grid container spacing={1}>
+            {cards}
+        </Grid>
+    </Box>);
 }
 
 export default LazyCarousel;

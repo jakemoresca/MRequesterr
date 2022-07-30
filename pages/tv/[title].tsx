@@ -4,7 +4,6 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import MediaCard from '../../components/mediacard';
 import { MediaStateType } from '../../states/media';
 import { ISettings } from '../../models/settings';
-import { Card, CardBody, CardSubtitle, CardTitle, Container, Input, Label, Progress } from 'reactstrap';
 import { Season } from '../../models/sonarrSeries';
 import { IMedia } from '../../models/media';
 import Authenticate from '../../components/authenticate';
@@ -12,6 +11,8 @@ import Head from 'next/head';
 import { updateRequestSeries, requestSeries, useSeries, useSeriesLookup } from '../../services/series';
 import { getSettings } from '../../services/settings';
 import { convertToMedia, useTmdbSeries } from '../../services/tmdb';
+import { Label } from '@mui/icons-material';
+import { Box, Grid, Card, CardContent, Typography, Input, Checkbox, LinearProgress, FormLabel } from '@mui/material';
 
 export interface ITVProps {
     settings: ISettings;
@@ -78,11 +79,56 @@ const TV: NextPage<ITVProps> = (props) => {
 
         const progress = Math.ceil(media?.statistics.percentOfEpisodes ?? 0);
 
-        return (<Container fluid>
+        return (<Box>
             <Head><title>View TV</title></Head>
             <Authenticate settings={props.settings}>
-                <MediaCard media={media} handleRequest={handleRequest} isDirty={isDirty} />
-                <br />
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <MediaCard media={media} handleRequest={handleRequest} isDirty={isDirty} />
+                    </Grid>
+
+                    <Grid item md={2} xs={6}>
+                        <Card variant="outlined">
+                            <CardContent>
+                                <Typography gutterBottom variant="h5" component="div">
+                                    Season Information
+                                </Typography>
+                                <Typography gutterBottom variant="h6" component="div">
+                                    Please select the season to monitor and download:
+                                </Typography>
+                                {
+                                    seasons && seasons.map((season, x) => {
+                                        const currentValue = seriesLookup?.seasons.find(y => y.seasonNumber == season.seasonNumber);
+
+                                        return (
+                                            <div key={x}>
+                                                <Checkbox checked={season.monitored}
+                                                    onChange={(event) => handleCheck(event, season.seasonNumber)}
+                                                    disabled={currentValue?.monitored && media?.isAvailable} />
+                                                <FormLabel>
+                                                    {season.seasonNumber == 0 ? ' Specials' : ` Season ${season.seasonNumber}`}
+                                                </FormLabel>
+                                            </div>
+                                        );
+                                    })
+                                }
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
+                    <Grid item md={2} xs={6}>
+                        <Card variant="outlined">
+                            <CardContent>
+                                <Typography gutterBottom variant="h5" component="div">
+                                    Request Progress
+                                </Typography>
+                                <LinearProgress value={progress} />
+                                {`${progress} / 100`}
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                </Grid>
+                {/* <br />
                 <Container fluid className='d-flex flex-row'>
                     <Card color="secondary col-md-4 col-sm-6 mx-1">
                         <CardBody>
@@ -119,9 +165,9 @@ const TV: NextPage<ITVProps> = (props) => {
                             {`${progress} / 100`}
                         </CardBody>
                     </Card>
-                </Container>
+                </Container> */}
             </Authenticate>
-        </Container>);
+        </Box>);
     }
 
     return (

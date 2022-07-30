@@ -4,7 +4,6 @@ import { ChangeEventHandler, KeyboardEventHandler, useEffect, useState } from 'r
 import { SetterOrUpdater, useRecoilState } from 'recoil';
 import MediaCard from '../../components/mediacard';
 import { ISettings } from '../../models/settings';
-import { Container, Input } from 'reactstrap';
 import { searchResultState } from '../../states/search';
 import { ITmdbSearchResult, MediaType } from '../../models/tmdbSearch';
 import { IMedia } from '../../models/media';
@@ -15,6 +14,7 @@ import { getMovies } from '../../services/movies';
 import { getSeries } from '../../services/series';
 import { getSettings } from '../../services/settings';
 import { convertSearchResultToMedia, searchTmdb } from '../../services/tmdb';
+import { Box, Container, Grid, Input, Link as MUILink, TextField } from '@mui/material';
 
 export interface ITVProps {
     settings: ISettings;
@@ -43,12 +43,15 @@ const TV: NextPage<ITVProps> = (props) => {
         setSearchText(event.currentTarget.value);
     }
 
-    return (<Container fluid>
+    return (<Box>
         <Head>
             <title>Search</title>
         </Head>
         <Authenticate settings={props.settings}>
-            <Input type="search" placeholder="Search" onKeyUp={handleSearch} onChange={handleChange} value={searchText} />
+        <Grid container sx={{flexDirection: "row"}} spacing={2}>
+            <Grid item xs={12}>
+                <TextField type="search" placeholder="Search" onKeyUp={handleSearch} onChange={handleChange} value={searchText} fullWidth />
+            </Grid>
 
             {searchResults?.map((searchResult, index) => {
                 const isMovie = searchResult.media_type == MediaType.Movie;
@@ -59,14 +62,14 @@ const TV: NextPage<ITVProps> = (props) => {
                     const media: IMedia = { ...convertSearchResultToMedia(searchResult), isAvailable: !!sonarrSeriesMedia }
                     const linkHref = `/tv/${searchResult.name}`;
 
-                    return (<Link key={`link${index}`} href={linkHref}><a className='text-decoration-none'><MediaCard key={index} media={media} /></a></Link>)
+                    return (<Grid item xs={12} key={`link${index}`}><Link href={linkHref}><MUILink sx={{textDecoration: "none"}}><MediaCard key={index} media={media} /></MUILink></Link></Grid>)
                 }
                 else if (isMovie) {
                     const radarrMovieMedia = props.movies.find(x => x.tmdbId == searchResult.id.toString());
                     const media: IMedia = { ...convertSearchResultToMedia(searchResult), isAvailable: radarrMovieMedia?.hasFile ?? false }
                     const linkHref = `/movies/${searchResult.id ?? ""}`;
 
-                    return (<Link key={`link${index}`} href={linkHref}><a className='text-decoration-none'><MediaCard key={index} media={media} /></a></Link>)
+                    return (<Grid item xs={12} key={`link${index}`}><Link href={linkHref}><MUILink sx={{textDecoration: "none"}}><MediaCard key={index} media={media} /></MUILink></Link></Grid>)
                 }
             })
             }
@@ -74,8 +77,9 @@ const TV: NextPage<ITVProps> = (props) => {
             {searchResults?.length == 0 &&
                 <h5 className='align-center'>It&apos;s easy to add a new request, just start typing the name of the movie / series you want to add</h5>
             }
+            </Grid>
         </Authenticate>
-    </Container>);
+    </Box>);
 }
 
 async function fetchData(query: string, setSearchResult: SetterOrUpdater<ITmdbSearchResult[]>, settings: ISettings) {

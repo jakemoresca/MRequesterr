@@ -1,6 +1,7 @@
+import { Container, FormGroup, Button } from "@mui/material";
 import Head from "next/head";
 import React, { ChangeEventHandler, FormEventHandler, useState } from "react";
-import { Button, Container, Form, FormGroup } from "reactstrap";
+// import { Button, Container, Form, FormGroup } from "reactstrap";
 import { SetterOrUpdater, useRecoilState } from "recoil";
 import { ISettings } from "../models/settings";
 import { plexLogin, login } from "../services/user";
@@ -46,7 +47,7 @@ const Login = (props: ILoginProps) => {
     const hideJellyfinLogin = true;
 
     return (<Container className="w-100 m-auto py-4 d-flex justify-content-center">
-        <Form data-bitwarden-watching="1" style={{ maxWidth: 330 }} className="col align-self-center" action="/" onSubmit={handlePlexLogin}>
+        <form data-bitwarden-watching="1" style={{ maxWidth: 330 }} className="col align-self-center" action="/" onSubmit={handlePlexLogin}>
             <Head>
                 <title>Login</title>
             </Head>
@@ -55,11 +56,11 @@ const Login = (props: ILoginProps) => {
 
             {!hideJellyfinLogin &&
                 <>
-                    <FormGroup row floating disabled>
+                    <FormGroup row>
                         <input type="text" className="form-control" id="floatingInput" placeholder="Username" value={loginState?.username} onChange={handleLoginChange} disabled />
                         <label htmlFor="floatingInput">Username</label>
                     </FormGroup>
-                    <FormGroup row floating disabled>
+                    <FormGroup row>
                         <input type="password" className="form-control" id="floatingPassword" placeholder="Password" value={loginState?.password} onChange={handlePasswordChange} disabled />
                         <label htmlFor="floatingPassword">Password</label>
                     </FormGroup>
@@ -74,7 +75,7 @@ const Login = (props: ILoginProps) => {
                 Plex Sign in
             </Button>
             <p className="mt-5 mb-3 text-muted">© 2022</p>
-        </Form>
+        </form>
     </Container>);
 };
 

@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['rydersir.polaris.usbx.me'],
+    domains: ['rydersir.polaris.usbx.me', 'www.themoviedb.org'],
   },
 }
 

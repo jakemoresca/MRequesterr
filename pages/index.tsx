@@ -1,14 +1,12 @@
-import type { NextPage } from 'next'
 import Head from 'next/head'
 import { IMedia } from '../models/media'
 import { ISettings } from '../models/settings'
-import styles from '../styles/Home.module.css'
 import LazyCarousel from '../components/carousel'
 import Authenticate from '../components/authenticate'
-import { useEffect } from 'react'
 import { useAvailableMovies, getItemTypeAndUrl } from '../services/movies'
 import { useAvailableSeries } from '../services/series'
 import { getSettings } from '../services/settings'
+import { Box } from '@mui/material'
 
 export interface IHomeProps {
   settings: ISettings;
@@ -50,11 +48,11 @@ function Home(props: IHomeProps) {
         <title>Now Playing</title>
       </Head>
       <Authenticate settings={props.settings}>
-        <div className="container-fluid">
-          <LazyCarousel items={movies} getItemTypeAndUrl={getRadarrItemTypeAndUrlAction} title="Movies" />
+        <Box>
+          <LazyCarousel items={movies} getItemTypeAndUrl={getRadarrItemTypeAndUrlAction} title="Movies" isLoading={isMoviesLoading} />
           <hr />
-          <LazyCarousel items={series} getItemTypeAndUrl={getSonarrItemTypeAndUrlAction} title="Series" />
-        </div>
+          <LazyCarousel items={series} getItemTypeAndUrl={getSonarrItemTypeAndUrlAction} title="Series" isLoading={isSeriesLoading} />
+        </Box>
       </Authenticate>
     </div>
   )

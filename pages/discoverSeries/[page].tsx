@@ -7,6 +7,7 @@ import { ISettings } from '../../models/settings'
 import { getSettings } from '../../services/settings'
 import { convertToMedia, usePopularSeries } from '../../services/tmdb'
 import { useRouter } from 'next/router'
+import { Box } from '@mui/material'
 
 export interface IHomeProps {
   settings: ISettings;
@@ -44,13 +45,13 @@ const DiscoverSeries: NextPage<IHomeProps> = (props) => {
       <Head>
         <title>Discover Movies</title>
       </Head>
-      <div className="container-fluid">
+      <Box>
         <Authenticate settings={props.settings}>
           <LazyCarousel items={convertedSeries} handleNext={handleNextSeries} handlePrev={handlePrevSeries}
             getItemTypeAndUrl={getItemTypeAndUrlSeries} title="Discover Popular Series" maxPage={10} 
             currentPage={parseInt(page as string) - 1} serverSide={true} />
         </Authenticate>
-      </div>
+      </Box>
     </div>
   )
 }

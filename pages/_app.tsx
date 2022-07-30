@@ -1,14 +1,8 @@
-import '../styles/globals.css'
-import "bootswatch/dist/darkly/bootstrap.min.css";
 import type { AppProps } from 'next/app'
-import { config } from '@fortawesome/fontawesome-svg-core'
-import '@fortawesome/fontawesome-svg-core/styles.css'
 import { RecoilRoot } from 'recoil';
 import { NextPage } from 'next/types';
 import { ReactElement, ReactNode } from 'react';
 import Layout from '../components/layout';
-
-config.autoAddCss = true
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode

@@ -7,6 +7,7 @@ import Authenticate from '../components/authenticate'
 import { getItemTypeAndUrl, getMovies } from '../services/movies'
 import { getSeries } from '../services/series'
 import { getSettings } from '../services/settings'
+import { Box } from '@mui/material'
 
 export interface IRequestsProps {
   settings: ISettings;
@@ -46,13 +47,13 @@ const Requests: NextPage<IRequestsProps> = (props) => {
       <Head>
         <title>Requests</title>
       </Head>
-      <div className="container-fluid">
+      <Box>
         <Authenticate settings={props.settings}>
           <LazyCarousel items={props.movies} getItemTypeAndUrl={getRadarrItemTypeAndUrlAction} showProgress={true} title="Movies" />
           <hr />
           <LazyCarousel items={props.series} getItemTypeAndUrl={getSonarrItemTypeAndUrlAction} showProgress={true} title="Series" />
         </Authenticate>
-      </div>
+      </Box>
     </div>
   )
 }
