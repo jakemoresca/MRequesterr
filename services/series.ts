@@ -144,11 +144,11 @@ export function useSeriesLookup(overrideSettings: ISettings, title?: string) {
     const settings = overrideSettings;
     const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/series/lookup`, `&term=${title}`);
 
-    const fetcher = (url: string): Promise<ISonarrSeries> => fetch(url).then(r => r.json())
+    const fetcher = (url: string): Promise<ISonarrSeries[]> => fetch(url).then(r => r.json())
     const { data, error } = useSWR(getSeriesUrl, fetcher)
 
     return {
-        seriesLookup: data,
+        seriesLookup: data && data[0],
         isSeriesLookupLoading: !error && !data,
         isError: error
     }

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { NextPage } from 'next/types';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import MediaCard from '../../components/mediacard';
 import { MediaStateType } from '../../states/media';
 import { ISettings } from '../../models/settings';
@@ -28,16 +28,15 @@ const TV: NextPage<ITVProps> = (props) => {
     const [seasons, setSeasons] = useState<Season[]>([]);
     const [isDirty, setIsDirty] = useState<boolean>(false);
 
+    useEffect(() => {
+        if (seriesLookup) {
+            setSeasons(seriesLookup.seasons)
+        }
+    }, [seriesLookup]);
+
     if (tmdbSeries != undefined && series != undefined && seriesLookup != undefined) {
-        console.log("before convertToMedia")
-
         const seriesMedia = convertToMedia(tmdbSeries);
-
-        console.log("done convertToMedia")
-
         const sonarrSeriesMedia = containsYear(title as string) ? series.find(x => findWithYear(x, title as string)) : series.find(x => x.title == tmdbSeries.name);
-
-        console.log("done sonarrSeriesMedia")
 
         let media: MediaStateType;
 
@@ -48,30 +47,26 @@ const TV: NextPage<ITVProps> = (props) => {
             media = { ...seriesMedia, additionalInfo: seriesLookup };
         }
 
-        if(seriesLookup) {
-            setSeasons(seriesLookup.seasons)
-        }
-
         const handleCheck = (event: ChangeEvent<HTMLInputElement>, seasonNumber: number) => {
             const newSeasonState = [...seasons.map(season => {
                 if (season.seasonNumber == seasonNumber) {
                     return { ...season, monitored: event.currentTarget.checked };
                 }
-    
+
                 return { ...season }
             })];
-    
+
             setSeasons(newSeasonState);
             setIsDirty(true);
         }
-    
+
         const handleRequest = async () => {
-            if(!seriesLookup)
+            if (!seriesLookup)
                 return;
 
-            const newSeriesState = {...seriesLookup, seasons: [...seasons]}
-            
-            if(media?.isAvailable) {
+            const newSeriesState = { ...seriesLookup, seasons: [...seasons] }
+
+            if (media?.isAvailable) {
                 await updateRequestSeries(newSeriesState, props.settings)
             }
             else {
@@ -80,9 +75,9 @@ const TV: NextPage<ITVProps> = (props) => {
 
             setIsDirty(false);
         }
-    
+
         const progress = Math.ceil(media?.statistics.percentOfEpisodes ?? 0);
-    
+
         return (<Container fluid>
             <Head><title>View TV</title></Head>
             <Authenticate settings={props.settings}>
@@ -100,12 +95,12 @@ const TV: NextPage<ITVProps> = (props) => {
                             {
                                 seasons && seasons.map((season, x) => {
                                     const currentValue = seriesLookup?.seasons.find(y => y.seasonNumber == season.seasonNumber);
-    
+
                                     return (
                                         <div key={x}>
                                             <Input type="checkbox" checked={season.monitored}
                                                 onChange={(event) => handleCheck(event, season.seasonNumber)}
-                                                disabled={currentValue?.monitored} />
+                                                disabled={currentValue?.monitored && media?.isAvailable} />
                                             <Label check>
                                                 {season.seasonNumber == 0 ? ' Specials' : ` Season ${season.seasonNumber}`}
                                             </Label>

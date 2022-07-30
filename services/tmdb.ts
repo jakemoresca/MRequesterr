@@ -71,11 +71,11 @@ export async function getSeries(title: string): Promise<ITmdbMovieResult> {
 export function useTmdbSeries(title: string) {
   const getSeriesUrl = `https://api.themoviedb.org/3/search/tv?query=${title}&api_key=${apiKey}&language=en-US`;
 
-  const fetcher = (url: string): Promise<ITmdbMovieResult> => fetch(url).then(r => r.json())
+  const fetcher = (url: string): Promise<ITmdbMovie> => fetch(url).then(r => r.json())
   const { data, error } = useSWR(getSeriesUrl, fetcher)
 
   return {
-      tmdbSeries: data,
+      tmdbSeries: data && data.results[0],
       isTmdbSeriesLoading: !error && !data,
       isError: error
   }
@@ -100,8 +100,6 @@ export function getImage(file: string) {
 export function convertToMedia(tmdbMovie: ITmdbMovieResult): IMedia
 {
   const title = tmdbMovie.title || tmdbMovie.name || "NO TITLE";
-
-  console.log(tmdbMovie);
 
   return {
     ...tmdbMovie,
