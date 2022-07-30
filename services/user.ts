@@ -28,6 +28,58 @@ export async function login(username?: string, password?: string, overrideSettin
     return { AccessToken: "", ServerId: "" };
 }
 
+export async function createUser(username?: string, password?: string, referrer?: string, overrideSettings?: ISettings): Promise<IAuthState> {
+    const settings = overrideSettings ?? await getSettings();
+    const isValidReferrer = await getReferrer(referrer, overrideSettings);
+
+    if(!isValidReferrer) {
+        return { AccessToken: "", ServerId: "" };
+    }
+
+    const body = {
+        "Name": username,
+        "Password": password
+    };
+
+    const createUserUrl = getServiceUrl(settings.integrationSettings.auth, "/Users/New");
+    const createUserResult = await fetch(createUserUrl, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+            'x-emby-authorization': 'MediaBrowser Client="Custom Client", Device="Custom Device", DeviceId="1", Version="0.0.1"',
+            'content-type': 'application/json'
+        }
+    });
+
+    if (createUserResult.ok) {
+        return createUserResult.json();
+    }
+
+    return { AccessToken: "", ServerId: "" };
+}
+
+export async function getReferrer(referrer?: string, overrideSettings?: ISettings) {
+    const settings = overrideSettings ?? await getSettings();
+    const getUsersUrl = getServiceUrl(settings.integrationSettings.auth, "/Users");
+
+    const getUsersResult = await fetch(getUsersUrl, {
+        method: 'GET',
+        headers: {
+            'x-emby-authorization': 'MediaBrowser Client="Custom Client", Device="Custom Device", DeviceId="1", Version="0.0.1"',
+            'content-type': 'application/json'
+        }
+    });
+
+    if(getUsersResult.ok) {
+        const result: Array<any> = await getUsersResult.json();
+        const referrerUser = result.filter(x => x.Name == referrer);
+
+        return referrerUser.length > 0;
+    }
+
+    return false;
+}
+
 
 const getServiceUrl = (authSettings: IAuthSettings, relativeServiceUrl: string, queryString?: string) => {
     var apiKey = authSettings.apiKey;

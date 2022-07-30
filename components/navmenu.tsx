@@ -56,7 +56,6 @@ const NavMenu = () => {
     const router = useRouter();
     const [searchText, setSearchText] = useState<string>("");
     const [userState, setUserState] = useRecoilState(authState);
-
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
     const [discoverAnchorEl, setDiscoverAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -102,6 +101,10 @@ const NavMenu = () => {
         {"name": 'Request', "link": "/requests" }, {"name": 'Movies Calendar', "link": "/calendar/movie" }, {"name": 'Series Calendar', "link": "/calendar/tv" }, 
         {"name": 'Logout', "action": handleLogout }
     ];
+
+    if(!userState?.AccessToken) {
+        return <></>
+    }
 
     const drawer = (
         <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
