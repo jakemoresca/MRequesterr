@@ -28,7 +28,7 @@ const TV: NextPage<ITVProps> = (props) => {
     const [seasons, setSeasons] = useState<Season[]>([]);
     const [isDirty, setIsDirty] = useState<boolean>(false);
 
-    if (tmdbSeries != undefined && series != undefined) {
+    if (tmdbSeries != undefined && series != undefined && seriesLookup != undefined) {
         const seriesMedia = convertToMedia(tmdbSeries);
         const sonarrSeriesMedia = containsYear(title as string) ? series.find(x => findWithYear(x, title as string)) : series.find(x => x.title == tmdbSeries.name);
 
