@@ -143,7 +143,7 @@ export function useRadarrQueue(overrideSettings: ISettings) {
     const getQueueUrl = getServiceUrl(settings.integrationSettings.movies, `${API_BASE_URL}/queue`, "&pageSize=20&includeUnknownMovieItems=false");
 
     const fetcher = (url: string): Promise<IRadarrQueue> => fetch(url).then(r => r.json())
-    const { data, error } = useSWR(() => getQueueUrl, fetcher, { refreshInterval: 1000 })
+    const { data, error } = useSWR(() => getQueueUrl, fetcher, { refreshInterval: 60000 })
 
     return {
         radarrQueue: data,

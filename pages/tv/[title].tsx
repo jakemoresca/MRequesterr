@@ -13,6 +13,7 @@ import { getSettings } from '../../services/settings';
 import { convertToMedia, useTmdbSeries } from '../../services/tmdb';
 import { Label } from '@mui/icons-material';
 import { Box, Grid, Card, CardContent, Typography, Input, Checkbox, LinearProgress, FormLabel } from '@mui/material';
+import { sendDiscordRequestMessage } from '../../services/discord';
 
 export interface ITVProps {
     settings: ISettings;
@@ -72,6 +73,10 @@ const TV: NextPage<ITVProps> = (props) => {
             }
             else {
                 await requestSeries(newSeriesState, props.settings);
+
+                if(seriesMedia) {
+                    await sendDiscordRequestMessage(seriesMedia, props.settings);
+                }
             }
 
             setIsDirty(false);

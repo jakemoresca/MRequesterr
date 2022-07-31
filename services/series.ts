@@ -25,7 +25,7 @@ export function useSeries(overrideSettings: ISettings) {
     const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/series`);
 
     const fetcher = (url: string): Promise<IMedia[]> => fetch(url).then(r => r.json())
-    const { data, error } = useSWR(getSeriesUrl, fetcher, { refreshInterval: 1000 })
+    const { data, error } = useSWR(getSeriesUrl, fetcher, { refreshInterval: 60000 })
 
     return {
         series: data,

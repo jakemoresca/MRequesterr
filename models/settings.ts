@@ -9,6 +9,7 @@ export interface IIntegrationSettings
     movies: IMovieSettings;
     series: ISeriesSettings;
     auth: IAuthSettings;
+    discordWebhookUrl: string;
 }
 
 export interface IMovieSettings

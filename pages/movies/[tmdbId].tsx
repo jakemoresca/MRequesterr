@@ -10,6 +10,7 @@ import { requestMovie, useMovies, useRadarrQueue, useMovieLookup, } from '../../
 import { getSettings } from '../../services/settings';
 import { convertToMedia, useTmdbMovie } from '../../services/tmdb';
 import { Box, Card, CardContent, Grid, LinearProgress, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { sendDiscordRequestMessage } from '../../services/discord';
 
 export interface IMovieProps {
     settings: ISettings;
@@ -58,6 +59,10 @@ function Movie(props: IMovieProps) {
         const handleRequest = async () => {
             if (movieLookup != undefined) {
                 await requestMovie(movieLookup, props.settings);
+
+                if(radarrMovieMedia) {
+                    await sendDiscordRequestMessage(radarrMovieMedia, props.settings);
+                }
             }
         };
 

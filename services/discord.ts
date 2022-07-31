@@ -1,35 +1,35 @@
-// export async function sendDiscordRequestMessage() {
-//     const settings = overrideSettings ?? await getSettings();
+import { IMedia } from "../models/media";
+import { ISettings } from "../models/settings";
+import { getSettings } from "./settings";
 
-//     const apikey = settings.integrationSettings.movies.apiKey;
-//     const rootFolderPath = (await getRootFolder(settings))[0];
+export async function sendDiscordRequestMessage(media: IMedia, overrideSettings?: ISettings) {
+    const settings = overrideSettings ?? await getSettings();
 
-//     const movieRequestBody: IRadarrMovie = {
-//         ...media,
-//         qualityProfileId: 1,
-//         apikey,
-//         monitored: true,
-//         rootFolderPath: rootFolderPath.path,
-//         addOptions: { searchForMovie: true }
-//     }
+    const discordRequestBody = {
+        content: `Hello! Your request for ${media.title} has been approved`,
+        author: "MRequesterr",
+        embeds: [
+            {
+                title: media.title,
+                description: media.overview,
+                color: 5814783,
+                image: {
+                    url: media.images[0].url
+                }
+            }]
+    }
 
-//     var discordWebhookUrl = 
+    const result = await fetch(settings.integrationSettings.discordWebhookUrl, {
+        method: 'POST',
+        body: JSON.stringify(discordRequestBody),
+        headers: {
+            'content-type': 'application/json'
+        }
+    });
 
-//     const result = await fetch(requestMovieUrl, {
-//         method: 'POST',
-//         body: JSON.stringify(movieRequestBody),
-//         headers: {
-//             'content-type': 'application/json'
-//         }
-//     });
+    if (result.ok) {
+        return true;
+    }
 
-//     if (result.ok) {
-//         return result.json();
-//     }
-
-//     // return media;
-// }
-
-export function test() {
-    
+    // return media;
 }
