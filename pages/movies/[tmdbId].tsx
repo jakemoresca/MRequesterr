@@ -51,7 +51,7 @@ function Movie(props: IMovieProps) {
         const inQueue = progressValue.toString() != 'NaN';
         const progress = inQueue ? (
             <>
-                <LinearProgress value={progressValue} />
+                <LinearProgress variant="determinate" value={progressValue} />
                 {`${progressValue} / 100`}
             </>
         ) : <>Movie is not in download queue</>;

@@ -8,12 +8,13 @@ import { Season } from '../../models/sonarrSeries';
 import { IMedia } from '../../models/media';
 import Authenticate from '../../components/authenticate';
 import Head from 'next/head';
-import { updateRequestSeries, requestSeries, useSeries, useSeriesLookup } from '../../services/series';
+import { updateRequestSeries, requestSeries, useSeries, useSeriesLookup, useSeriesEpisodes } from '../../services/series';
 import { getSettings } from '../../services/settings';
 import { convertToMedia, useTmdbSeries } from '../../services/tmdb';
 import { Label } from '@mui/icons-material';
 import { Box, Grid, Card, CardContent, Typography, Input, Checkbox, LinearProgress, FormLabel } from '@mui/material';
 import { sendDiscordRequestMessage } from '../../services/discord';
+import EpisodeList from '../../components/episodeList';
 
 export interface ITVProps {
     settings: ISettings;
@@ -25,7 +26,7 @@ const TV: NextPage<ITVProps> = (props) => {
 
     const { tmdbSeries } = useTmdbSeries(title as string);
     const { series } = useSeries(props.settings);
-    const { seriesLookup } = useSeriesLookup(props.settings, title as string)
+    const { seriesLookup } = useSeriesLookup(props.settings, title as string);
 
     const [seasons, setSeasons] = useState<Season[]>([]);
     const [isDirty, setIsDirty] = useState<boolean>(false);
@@ -42,8 +43,10 @@ const TV: NextPage<ITVProps> = (props) => {
 
         let media: MediaStateType;
 
+        const progress = Math.ceil(sonarrSeriesMedia?.statistics?.percentOfEpisodes ?? 0);
+
         if (sonarrSeriesMedia) {
-            media = { ...seriesMedia, isAvailable: true, additionalInfo: seriesLookup, statistics: sonarrSeriesMedia.statistics }
+            media = { ...seriesMedia, isAvailable: true, hasFile: progress >= 100, additionalInfo: seriesLookup, statistics: sonarrSeriesMedia.statistics }
         }
         else {
             media = { ...seriesMedia, additionalInfo: seriesLookup };
@@ -82,7 +85,7 @@ const TV: NextPage<ITVProps> = (props) => {
             setIsDirty(false);
         }
 
-        const progress = Math.ceil(media?.statistics?.percentOfEpisodes ?? 0);
+        const seasonMap = seasons ? seasons.map(x => x.seasonNumber) : [];
 
         return (<Box>
             <Head><title>View TV</title></Head>
@@ -127,50 +130,16 @@ const TV: NextPage<ITVProps> = (props) => {
                                 <Typography gutterBottom variant="h5" component="div">
                                     Request Progress
                                 </Typography>
-                                <LinearProgress value={progress} />
+                                <LinearProgress variant="determinate" value={progress} />
                                 {`${progress} / 100`}
                             </CardContent>
                         </Card>
                     </Grid>
-                </Grid>
-                {/* <br />
-                <Container fluid className='d-flex flex-row'>
-                    <Card color="secondary col-md-4 col-sm-6 mx-1">
-                        <CardBody>
-                            <CardTitle tag="h5">
-                                Season Information
-                            </CardTitle>
-                            <CardSubtitle>
-                                Please select the season to monitor and download:
-                            </CardSubtitle>
-                            {
-                                seasons && seasons.map((season, x) => {
-                                    const currentValue = seriesLookup?.seasons.find(y => y.seasonNumber == season.seasonNumber);
 
-                                    return (
-                                        <div key={x}>
-                                            <Input type="checkbox" checked={season.monitored}
-                                                onChange={(event) => handleCheck(event, season.seasonNumber)}
-                                                disabled={currentValue?.monitored && media?.isAvailable} />
-                                            <Label check>
-                                                {season.seasonNumber == 0 ? ' Specials' : ` Season ${season.seasonNumber}`}
-                                            </Label>
-                                        </div>
-                                    );
-                                })
-                            }
-                        </CardBody>
-                    </Card>
-                    <Card color="secondary col-md-4 col-sm-6 mx-1">
-                        <CardBody>
-                            <CardTitle tag="h5">
-                                Request Progress
-                            </CardTitle>
-                            <Progress className="col-md-9 bg-dark" value={progress} />
-                            {`${progress} / 100`}
-                        </CardBody>
-                    </Card>
-                </Container> */}
+                    <Grid item md={4} xs={12}>
+                        <EpisodeList settings={props.settings} seriesId={seriesLookup.id.toString()} seasonMap={seasonMap}></EpisodeList>
+                    </Grid>
+                </Grid>
             </Authenticate>
         </Box>);
     }

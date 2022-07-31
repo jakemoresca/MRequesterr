@@ -1,5 +1,5 @@
 import useSWR, { mutate } from 'swr';
-import { IMedia } from '../models/media';
+import { IMedia, SonarrEpisode } from '../models/media';
 import { ISeriesSettings, ISettings } from '../models/settings'
 import { ISonarrRootFolder, ISonarrSeries } from '../models/sonarrSeries';
 import { getSettings } from './settings';
@@ -30,6 +30,20 @@ export function useSeries(overrideSettings: ISettings) {
     return {
         series: data,
         isSeriesLoading: !error && !data,
+        isError: error
+    }
+}
+
+export function useSeriesEpisodes(seriesId: string, overrideSettings: ISettings) {
+    const settings = overrideSettings;
+    const getSeriesUrl = getServiceUrl(settings.integrationSettings.series, `${API_BASE_URL}/episode`, `&seriesId=${seriesId}`);
+
+    const fetcher = (url: string): Promise<SonarrEpisode[]> => fetch(url).then(r => r.json())
+    const { data, error } = useSWR(getSeriesUrl, fetcher, { refreshInterval: 60000 })
+
+    return {
+        seriesEpisodes: data,
+        isSeriesEpisodesLoading: !error && !data,
         isError: error
     }
 }

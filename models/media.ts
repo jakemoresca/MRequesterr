@@ -99,3 +99,15 @@ export interface Revision {
     real:     number;
     isRepack: boolean;
 }
+
+export interface SonarrEpisode {
+    seriesId: number,
+    tvdbId: number,
+    seasonNumber: number,
+    episodeNumber: number,
+    title: string,
+    airDate: string,
+    overview: string,
+    hasFile: boolean,
+    monitored: boolean,
+}
