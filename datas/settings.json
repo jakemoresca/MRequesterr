@@ -21,7 +21,8 @@
             "port": 443,
             "useSsl": true
         },
-        "tmdbApiKey": ""
+        "tmdbApiKey": "",
+        "discordWebhookUrl": ""
     },
     "plexLogin": true
 }
